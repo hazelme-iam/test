@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Light & Dark Surface Palette</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      background: #F5F6F8;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 24px;
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+    }
+    .pair {
+      width: min(400px, 100%);
+      display: grid;
+      gap: 12px;
+    }
+    .panel {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .light {
+      background: #FFFFFF;
+      color: #10141A;
+      border-color: #DDE1E7;
+    }
+    .dark {
+      background: #1A1D24;
+      color: #E8EAED;
+      border-color: #2D3139;
+    }
+    h2 {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+    p {
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 0 0 12px;
+    }
+    .btn {
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 8px 12px;
+      display: inline-block;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .light .btn {
+      background: #2F49E8;
+    }
+    .dark .btn {
+      background: #6B82F5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="pair">
+    <!-- Light Surface Panel -->
+    <div class="panel light">
+      <h2>Light surface</h2>
+      <p>Ink on paper with a deep brand CTA.</p>
+      <button type="button" class="btn">Deep brand CTA</button>
+    </div>
+
+    <!-- Dark Surface Panel -->
+    <div class="panel dark">
+      <h2>Dark surface</h2>
+      <p>Soft white text; brand lifted for visibility.</p>
+      <button type="button" class="btn">Lifted brand CTA</button>
+    </div>
+  </div>
+
+</body>
+</html>

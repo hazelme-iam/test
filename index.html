@@ -10,8 +10,13 @@
 
   <!-- Clinic Header & Progress Tracker -->
   <header class="flow-header">
-    <div class="clinic-badge">
-      <span>CarePoint Health Clinic &middot; Outpatient Services</span>
+    <div class="header-top-bar">
+      <div class="clinic-badge">
+        <span>CarePoint Health Clinic &middot; Outpatient Services</span>
+      </div>
+      <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle dark and light theme">
+        <span id="theme-mode-label">Dark Mode</span>
+      </button>
     </div>
     <h1>Patient Registration & Intake System</h1>
     <p>Sign in or register your patient account, complete the clinical intake form, and confirm your outpatient consultation.</p>
@@ -454,6 +459,20 @@
     </section>
 
   </main>
+
+  <!-- Paired Light & Dark Surface Palette (HCI Visual Specification) -->
+  <section class="pair" aria-label="Paired Theme Surfaces">
+    <div class="panel light">
+      <h2>Light surface</h2>
+      <p>Ink on paper with a deep brand CTA.</p>
+      <button type="button" class="btn" id="btn-demo-light">Deep brand CTA</button>
+    </div>
+    <div class="panel dark">
+      <h2>Dark surface</h2>
+      <p>Soft white text; brand lifted for visibility.</p>
+      <button type="button" class="btn" id="btn-demo-dark">Lifted brand CTA</button>
+    </div>
+  </section>
 
   <!-- HCI Guidelines & Best Practices Reference -->
   <aside class="hci-notes">

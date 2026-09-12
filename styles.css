@@ -1,6 +1,7 @@
 /* ==========================================================================
    Design System & Shared Styles
    Following HCI Guidelines: Single-column forms, explicit labels, clear feedback
+   Light & Dark Palette: Paired surfaces, lifted brand on dark
    ========================================================================== */
 
 *, *::before, *::after {
@@ -16,12 +17,37 @@
   --border-input: #C5CAD3;
   --primary: #2F49E8;
   --primary-hover: #243bbd;
+  --card-bg: #FFFFFF;
+  --input-bg: #F5F6F8;
+  --input-focus-bg: #FFFFFF;
   --error: #B42318;
   --error-bg: #FDF2F2;
+  --error-border: #F8B4B4;
   --success-bg: #E7F5F1;
   --success-text: #0E7C66;
-  --danger: #C62828;
-  --danger-hover: #A31F1F;
+  --dialog-bg: #FFFFFF;
+  --summary-bg: #F5F6F8;
+}
+
+[data-theme="dark"] {
+  --bg-page: #101216;
+  --text-primary: #E8EAED;
+  --text-muted: #9AA0A6;
+  --text-dim: #70757A;
+  --border-card: #2D3139;
+  --border-input: #3C4048;
+  --primary: #6B82F5; /* Brand lifted for visibility on dark */
+  --primary-hover: #8296F8;
+  --card-bg: #1A1D24;
+  --input-bg: #14161C;
+  --input-focus-bg: #1A1D24;
+  --error: #F87171;
+  --error-bg: #2C1818;
+  --error-border: #4D2626;
+  --success-bg: #132D25;
+  --success-text: #34D399;
+  --dialog-bg: #1A1D24;
+  --summary-bg: #14161C;
 }
 
 body {
@@ -35,6 +61,7 @@ body {
   align-content: start;
   justify-items: center;
   gap: 20px;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 /* Header & Flow Tracker */
@@ -44,20 +71,47 @@ body {
   text-align: center;
 }
 
+.header-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 .clinic-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #E7F5F1;
-  color: #0E7C66;
+  background: var(--success-bg);
+  color: var(--success-text);
   padding: 5px 14px;
   border-radius: 20px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  margin-bottom: 10px;
   letter-spacing: 0.04em;
   border: 1px solid rgba(14, 124, 102, 0.25);
+}
+
+.theme-toggle-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--border-card);
+  color: var(--text-primary);
+  padding: 5px 12px;
+  border-radius: 18px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .flow-header h1 {
@@ -92,7 +146,7 @@ body {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border-card);
   transition: all 0.2s ease;
 }
@@ -111,7 +165,7 @@ body {
 
 .tracker-arrow {
   color: var(--border-input);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* Active Stage Display Container */
@@ -144,24 +198,25 @@ body {
    Card Container (Single-Column)
    ========================================================================== */
 .card {
-  background: #fff;
-  border: 1px solid #DDE1E7;
+  background: var(--card-bg);
+  border: 1px solid var(--border-card);
   border-radius: 10px;
   padding: 22px;
   width: min(390px, 100%);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 6px rgba(16, 20, 26, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .card h1 {
   font-size: 1.1rem;
   margin: 0 0 4px;
   font-weight: 700;
+  color: var(--text-primary);
 }
 
 .lede {
-  color: #5B616B;
+  color: var(--text-muted);
   font-size: 12px;
   margin: 0 0 16px;
   line-height: 1.45;
@@ -170,7 +225,7 @@ body {
 /* Auth Segmented Switch (Log In vs Register) */
 .auth-switch {
   display: flex;
-  background: #F5F6F8;
+  background: var(--input-bg);
   border: 1px solid var(--border-card);
   border-radius: 8px;
   padding: 3px;
@@ -189,12 +244,13 @@ body {
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.15s ease;
+  font-family: inherit;
 }
 
 .auth-tab.active {
-  background: #fff;
+  background: var(--card-bg);
   color: var(--primary);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .auth-panel {
@@ -226,15 +282,15 @@ label {
 
 .field-helper {
   font-size: 11.5px;
-  color: #5B616B;
+  color: var(--text-muted);
   margin-top: 4px;
   line-height: 1.35;
 }
 
 input, select {
-  background: #F5F6F8;
+  background: var(--input-bg);
   font-size: 14px;
-  border: 1px solid #C5CAD3;
+  border: 1px solid var(--border-input);
   border-radius: 6px;
   padding: 10px 12px;
   width: 100%;
@@ -245,17 +301,17 @@ input, select {
 }
 
 input:focus, select:focus {
-  background: #fff;
-  border-color: #2F49E8;
-  box-shadow: 0 0 0 2px rgba(47, 73, 232, 0.15);
+  background: var(--input-focus-bg);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(107, 130, 245, 0.2);
 }
 
 input::placeholder {
-  color: #8A8F98;
+  color: var(--text-dim);
 }
 
 .error {
-  color: #B42318;
+  color: var(--error);
   font-size: 12px;
   margin: 6px 0 0;
   display: none;
@@ -264,8 +320,8 @@ input::placeholder {
 
 .field.invalid input,
 .field.invalid select {
-  border-color: #B42318;
-  background: #FDF2F2;
+  border-color: var(--error);
+  background: var(--error-bg);
 }
 
 .field.invalid .error {
@@ -278,9 +334,9 @@ input::placeholder {
 
 /* Global Alert */
 .form-alert-error {
-  background: #FDF2F2;
-  border: 1px solid #F8B4B4;
-  color: #B42318;
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error);
   border-radius: 6px;
   padding: 10px 12px;
   font-size: 12px;
@@ -301,12 +357,12 @@ button {
 }
 
 button:focus-visible {
-  outline: 2px solid #2F49E8;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
 .btn-submit {
-  background: #2F49E8;
+  background: var(--primary);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -340,8 +396,8 @@ button:focus-visible {
 }
 
 .ok {
-  background: #E7F5F1;
-  color: #0E7C66;
+  background: var(--success-bg);
+  color: var(--success-text);
   font-size: 13px;
   border-radius: 6px;
   padding: 10px 12px;
@@ -365,7 +421,7 @@ button:focus-visible {
 }
 
 .progress span {
-  background: #DDE1E7;
+  background: var(--border-card);
   border-radius: 2px;
   height: 4px;
   flex: 1;
@@ -373,11 +429,11 @@ button:focus-visible {
 }
 
 .progress span.on {
-  background: #2F49E8;
+  background: var(--primary);
 }
 
 .step-label {
-  color: #5B616B;
+  color: var(--text-muted);
   font-size: 12px;
   margin: 0 0 16px;
   font-weight: 500;
@@ -411,19 +467,19 @@ button:focus-visible {
 }
 
 button.back {
-  background: #fff;
-  color: #10141A;
-  border: 1px solid #C5CAD3;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-input);
   flex: 1;
 }
 
 button.back:hover {
-  background: #F5F6F8;
+  background: var(--input-bg);
 }
 
 button.next,
 button.submit {
-  background: #2F49E8;
+  background: var(--primary);
   color: #fff;
   border: none;
   flex: 2;
@@ -438,8 +494,8 @@ button.submit:hover {
    3. Confirmation & Review Section
    ========================================================================== */
 .review-summary {
-  background: #F5F6F8;
-  border: 1px solid #DDE1E7;
+  background: var(--summary-bg);
+  border: 1px solid var(--border-card);
   border-radius: 8px;
   padding: 14px;
   display: flex;
@@ -468,19 +524,19 @@ button.submit:hover {
 }
 
 .review-row span.k {
-  color: #5B616B;
+  color: var(--text-muted);
 }
 
 .review-row span.v {
   font-weight: 600;
-  color: #10141A;
+  color: var(--text-primary);
   text-align: right;
   word-break: break-word;
 }
 
 /* Modal Backdrop & Confirmation Dialog */
 .backdrop {
-  background: rgba(16, 20, 26, 0.45);
+  background: rgba(16, 20, 26, 0.6);
   padding: 16px;
   display: none;
   place-items: center;
@@ -495,12 +551,12 @@ button.submit:hover {
 }
 
 .dialog {
-  background: #fff;
-  border: 1px solid #DDE1E7;
+  background: var(--dialog-bg);
+  border: 1px solid var(--border-card);
   border-radius: 10px;
   padding: 20px;
   width: min(340px, 100%);
-  box-shadow: 0 16px 40px rgba(16, 20, 26, 0.2);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
   animation: dialog-appear 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -513,10 +569,11 @@ button.submit:hover {
   font-size: 1rem;
   margin: 0 0 8px;
   font-weight: 700;
+  color: var(--text-primary);
 }
 
 .dialog p {
-  color: #5B616B;
+  color: var(--text-muted);
   font-size: 0.82rem;
   line-height: 1.45;
   margin: 0 0 16px;
@@ -528,9 +585,9 @@ button.submit:hover {
 }
 
 .btn-cancel {
-  background: #fff;
-  color: #10141A;
-  border: 1px solid #DDE1E7;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-card);
   border-radius: 6px;
   padding: 10px 14px;
   font-size: 13px;
@@ -539,11 +596,11 @@ button.submit:hover {
 }
 
 .btn-cancel:hover {
-  background: #F5F6F8;
+  background: var(--input-bg);
 }
 
 .btn-confirm {
-  background: #2F49E8;
+  background: var(--primary);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -561,8 +618,8 @@ button.submit:hover {
    Final Success Screen / Appointment Slip
    ========================================================================== */
 .final-success-card {
-  background: #fff;
-  border: 1px solid #DDE1E7;
+  background: var(--card-bg);
+  border: 1px solid var(--border-card);
   border-radius: 10px;
   padding: 24px;
   width: min(390px, 100%);
@@ -570,7 +627,7 @@ button.submit:hover {
   display: none;
   flex-direction: column;
   gap: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .final-success-card.show {
@@ -581,24 +638,24 @@ button.submit:hover {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #E7F5F1;
-  color: #0E7C66;
+  background: var(--success-bg);
+  color: var(--success-text);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 4px auto;
-  font-size: 24px;
 }
 
 .final-success-card h2 {
   font-size: 1.15rem;
   margin: 0;
   font-weight: 700;
+  color: var(--text-primary);
 }
 
 .appointment-slip {
-  background: #F5F6F8;
-  border: 1px dashed #C5CAD3;
+  background: var(--summary-bg);
+  border: 1px dashed var(--border-input);
   border-radius: 8px;
   padding: 16px;
   text-align: left;
@@ -618,7 +675,7 @@ button.submit:hover {
 }
 
 .btn-primary {
-  background: #2F49E8;
+  background: var(--primary);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -632,23 +689,82 @@ button.submit:hover {
   background: var(--primary-hover);
 }
 
+/* ==========================================================================
+   Light & Dark Surface Paired Specification (.pair, .panel, .light, .dark)
+   ========================================================================== */
+.pair {
+  width: min(400px, 100%);
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.panel {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.panel.light {
+  background: #FFFFFF;
+  color: #10141A;
+  border-color: #DDE1E7;
+}
+
+.panel.dark {
+  background: #1A1D24;
+  color: #E8EAED;
+  border-color: #2D3139;
+}
+
+.panel h2 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.panel p {
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 0 0 12px;
+}
+
+.panel .btn {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+
+.panel.light .btn {
+  background: #2F49E8;
+}
+
+.panel.dark .btn {
+  background: #6B82F5;
+}
+
 /* HCI Notes */
 .hci-notes {
   max-width: 500px;
   width: 100%;
-  background: #fff;
-  border: 1px solid #DDE1E7;
+  background: var(--card-bg);
+  border: 1px solid var(--border-card);
   border-radius: 10px;
   padding: 16px 20px;
   font-size: 13px;
   line-height: 1.5;
-  color: #5B616B;
+  color: var(--text-muted);
 }
 
 .hci-notes h3 {
   font-size: 14px;
   margin: 0 0 8px 0;
-  color: #10141A;
+  color: var(--text-primary);
 }
 
 .hci-grid {
@@ -658,7 +774,7 @@ button.submit:hover {
 }
 
 .hci-item strong {
-  color: #10141A;
+  color: var(--text-primary);
   display: block;
   margin-bottom: 2px;
 }

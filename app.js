@@ -602,4 +602,45 @@ document.addEventListener('DOMContentLoaded', () => {
     setPhase(1);
     setAuthMode('signin');
   });
+
+  // ========================================================================
+  // Theme Manager: Dedicated Light & Dark Palettes (Not simple inversion)
+  // ========================================================================
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  const themeModeLabel = document.getElementById('theme-mode-label');
+  const btnDemoLight = document.getElementById('btn-demo-light');
+  const btnDemoDark = document.getElementById('btn-demo-dark');
+  const THEME_KEY = 'carepoint_portal_theme';
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch (e) {}
+    if (themeModeLabel) {
+      themeModeLabel.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+    }
+  }
+
+  // Load saved theme or system preference
+  let initialTheme = 'light';
+  try {
+    initialTheme = localStorage.getItem(THEME_KEY) || 
+      (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (e) {}
+  applyTheme(initialTheme);
+
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  if (btnDemoLight) {
+    btnDemoLight.addEventListener('click', () => applyTheme('light'));
+  }
+  if (btnDemoDark) {
+    btnDemoDark.addEventListener('click', () => applyTheme('dark'));
+  }
 });
