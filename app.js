@@ -127,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const dialogCancel = document.getElementById('dialog-cancel');
   const dialogConfirm = document.getElementById('dialog-confirm');
   const modalPatientName = document.getElementById('modal-patient-name');
+  const modalPatientPhone = document.getElementById('modal-patient-phone');
   const modalDeptName = document.getElementById('modal-dept-name');
   const modalReasonName = document.getElementById('modal-reason-name');
   const modalShiftName = document.getElementById('modal-shift-name');
@@ -529,6 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
     lastFocusedElement = document.activeElement;
 
     modalPatientName.textContent = state.data.fullname;
+    if (modalPatientPhone) modalPatientPhone.textContent = state.data.phone;
     modalDeptName.textContent = state.data.dept;
     modalReasonName.textContent = state.data.reason;
     modalShiftName.textContent = state.data.shift;

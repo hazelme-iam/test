@@ -427,13 +427,31 @@
       <div class="dialog">
         <h2 id="dialog-title">Confirm Clinic Consultation Booking?</h2>
         <div id="dialog-desc">
-          <div style="background: #F5F6F8; border: 1px solid #DDE1E7; border-radius: 6px; padding: 10px; margin-bottom: 12px; color: #10141A; font-size: 12px; line-height: 1.55;">
-            <div><strong>Patient:</strong> <span id="modal-patient-name">&mdash;</span></div>
-            <div><strong>Department:</strong> <span id="modal-dept-name">&mdash;</span></div>
-            <div><strong>Consultation:</strong> <span id="modal-reason-name">&mdash;</span></div>
-            <div><strong>Shift:</strong> <span id="modal-shift-name">&mdash;</span></div>
+          <div class="dialog-summary-box">
+            <div class="dialog-row">
+              <span class="k">Patient:</span>
+              <span class="v" id="modal-patient-name">&mdash;</span>
+            </div>
+            <div class="dialog-row">
+              <span class="k">PH Mobile:</span>
+              <span class="v" id="modal-patient-phone">&mdash;</span>
+            </div>
+            <div class="dialog-row">
+              <span class="k">Department:</span>
+              <span class="v" id="modal-dept-name">&mdash;</span>
+            </div>
+            <div class="dialog-row">
+              <span class="k">Consultation:</span>
+              <span class="v" id="modal-reason-name">&mdash;</span>
+            </div>
+            <div class="dialog-row">
+              <span class="k">Shift:</span>
+              <span class="v" id="modal-shift-name">&mdash;</span>
+            </div>
           </div>
-          Please verify that all clinical details are correct. Once submitted, your consultation queue slot will be officially registered in the outpatient clinic triage system.
+          <p class="dialog-note">
+            Please verify that all clinical details are correct. Once submitted, your consultation queue slot will be officially registered in the outpatient clinic triage system.
+          </p>
         </div>
 
         <div class="dialog-actions">
