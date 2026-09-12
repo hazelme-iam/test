@@ -1,11 +1,11 @@
 // ==========================================================================
-// CarePoint Clinic: Connected Patient Authentication, Stepper & Confirmation
-// Strictly adhering to HCI: Single-column forms, explicit labels, clear feedback
+// CarePoint Health Clinic: Patient Portal Controller
+// Single-column forms, explicit labels, Philippine phone validation, zero emojis
 // ==========================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Mock account database in localStorage
   const ACCOUNTS_KEY = 'carepoint_registered_patients';
+
   function getAccounts() {
     try {
       const stored = localStorage.getItem(ACCOUNTS_KEY);
@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
     return [
       {
-        fullname: 'Hazel Nandong',
-        email: 'hazel@example.com',
+        fullname: 'Maria Santos',
+        email: 'maria.santos@carepoint.ph',
         password: 'patient123',
         company: 'Maxicare HMO'
       }
@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dob: '',
       dept: '',
       reason: '',
+      shift: '',
       hmo: '',
       emergency: '',
       allergies: ''
@@ -95,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const stepDept = document.getElementById('step-dept');
   const stepReason = document.getElementById('step-reason');
+  const stepShift = document.getElementById('step-shift');
   const stepHmo = document.getElementById('step-hmo');
 
   const stepEmergency = document.getElementById('step-emergency');
@@ -114,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const revDob = document.getElementById('rev-dob');
   const revDept = document.getElementById('rev-dept');
   const revReason = document.getElementById('rev-reason');
+  const revShift = document.getElementById('rev-shift');
   const revHmo = document.getElementById('rev-hmo');
   const revEmergency = document.getElementById('rev-emergency');
   const revAllergies = document.getElementById('rev-allergies');
@@ -127,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalPatientName = document.getElementById('modal-patient-name');
   const modalDeptName = document.getElementById('modal-dept-name');
   const modalReasonName = document.getElementById('modal-reason-name');
+  const modalShiftName = document.getElementById('modal-shift-name');
 
   // DOM Elements: Final Card
   const slipRefCode = document.getElementById('slip-ref-code');
@@ -134,9 +138,58 @@ document.addEventListener('DOMContentLoaded', () => {
   const slipContact = document.getElementById('slip-contact');
   const slipDept = document.getElementById('slip-dept');
   const slipReason = document.getElementById('slip-reason');
+  const slipShift = document.getElementById('slip-shift');
   const btnNewPatient = document.getElementById('btn-new-patient');
 
   let lastFocusedElement = null;
+
+  // Set today as the maximum date for DOB picker
+  if (stepDob) {
+    const today = new Date().toISOString().split('T')[0];
+    stepDob.setAttribute('max', today);
+  }
+
+  // ========================================================================
+  // Philippine Phone Validation & Formatting Helpers
+  // Standard format: 09XXXXXXXXX (11 digits) or +639XXXXXXXXX
+  // ========================================================================
+  function isPHMobileValid(phone) {
+    if (!phone) return false;
+    const clean = phone.replace(/[\s\-\(\)\.]/g, '');
+    return /^(09\d{9}|\+639\d{9}|639\d{9})$/.test(clean);
+  }
+
+  function formatPHMobile(phone) {
+    const clean = phone.replace(/[\s\-\(\)\.]/g, '');
+    if (/^09\d{9}$/.test(clean)) {
+      return `${clean.slice(0, 4)} ${clean.slice(4, 7)} ${clean.slice(7)}`;
+    }
+    if (/^\+639\d{9}$/.test(clean)) {
+      return `+63 ${clean.slice(3, 6)} ${clean.slice(6, 9)} ${clean.slice(9)}`;
+    }
+    if (/^639\d{9}$/.test(clean)) {
+      return `+63 ${clean.slice(2, 5)} ${clean.slice(5, 8)} ${clean.slice(8)}`;
+    }
+    return phone;
+  }
+
+  function isEmergencyContactValid(val) {
+    const text = val.trim();
+    if (text.length < 5) return false;
+    const hasLetters = /[a-zA-Z]{2,}/.test(text);
+    const cleanDigits = text.replace(/\D/g, '');
+    const hasPhone = cleanDigits.length >= 10;
+    return hasLetters && hasPhone;
+  }
+
+  function isDOBValid(dobStr) {
+    if (!dobStr) return false;
+    const dob = new Date(dobStr);
+    const now = new Date();
+    if (isNaN(dob.getTime())) return false;
+    const ageYears = (now - dob) / (1000 * 60 * 60 * 24 * 365.25);
+    return dob < now && ageYears <= 125 && ageYears >= 0;
+  }
 
   // ========================================================================
   // Navigation & Phase Transitions
@@ -149,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stageConfirmation.classList.toggle('active', phase === 3);
     finalCard.classList.toggle('show', phase === 4);
 
-    // Update Progress Breadcrumb
+    // Update Progress Tracker
     if (phase === 1) {
       node1.className = 'tracker-node active';
       node2.className = 'tracker-node';
@@ -198,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ========================================================================
-  // Validation Utilities (HCI: Immediate, Non-Punitive, Self-Healing)
+  // Validation Utilities (HCI: Immediate, Non-Punitive Feedback)
   // ========================================================================
   function validateField(inputEl, testFn) {
     const wrapper = inputEl.closest('.field');
@@ -217,17 +270,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  function isPhoneValid(phone) {
-    const cleaned = phone.replace(/\D/g, '');
-    return cleaned.length >= 10;
-  }
-
-  // Bind real-time input error clearing to all inputs
+  // Real-time error clearance
   const allInputs = [
     signinEmail, signinPassword,
     regFullname, regEmail, regPassword, regCompany,
     stepName, stepEmail, stepPhone, stepDob,
-    stepDept, stepReason, stepHmo,
+    stepDept, stepReason, stepShift, stepHmo,
     stepEmergency, stepAllergies
   ];
 
@@ -239,6 +287,13 @@ document.addEventListener('DOMContentLoaded', () => {
       signinError?.classList.remove('show');
       regError?.classList.remove('show');
     });
+  });
+
+  // Auto-format Philippine mobile number on blur
+  stepPhone.addEventListener('blur', () => {
+    if (isPHMobileValid(stepPhone.value)) {
+      stepPhone.value = formatPHMobile(stepPhone.value);
+    }
   });
 
   // ========================================================================
@@ -256,12 +311,10 @@ document.addEventListener('DOMContentLoaded', () => {
     formSignin.classList.toggle('active', isSignin);
     formRegister.classList.toggle('active', !isSignin);
 
-    // Reset error banners
     signinError.classList.remove('show');
     regError.classList.remove('show');
     regOk.classList.remove('show');
 
-    // Focus appropriate email field
     if (isSignin) {
       signinEmail.focus();
     } else {
@@ -386,13 +439,13 @@ document.addEventListener('DOMContentLoaded', () => {
   btnStep1Next.addEventListener('click', () => {
     const validName = validateField(stepName, val => val.length >= 2);
     const validEmail = validateField(stepEmail, val => isEmailValid(val));
-    const validPhone = validateField(stepPhone, val => isPhoneValid(val));
-    const validDob = validateField(stepDob, val => val.length > 0);
+    const validPhone = validateField(stepPhone, val => isPHMobileValid(val));
+    const validDob = validateField(stepDob, val => isDOBValid(val));
 
     if (validName && validEmail && validPhone && validDob) {
       state.data.fullname = stepName.value.trim();
       state.data.email = stepEmail.value.trim();
-      state.data.phone = stepPhone.value.trim();
+      state.data.phone = formatPHMobile(stepPhone.value.trim());
       state.data.dob = stepDob.value;
 
       setStepperStep(2);
@@ -409,12 +462,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Step 2 -> Step 3
   btnStep2Next.addEventListener('click', () => {
     const validDept = validateField(stepDept, val => val.length > 0);
-    const validReason = validateField(stepReason, val => val.length >= 2);
+    const validReason = validateField(stepReason, val => val.length > 0);
 
     if (validDept && validReason) {
       state.data.dept = stepDept.value;
-      state.data.reason = stepReason.value.trim();
-      state.data.hmo = stepHmo.value.trim() || 'None specified';
+      state.data.reason = stepReason.value;
+      state.data.shift = stepShift.value;
+      state.data.hmo = stepHmo.value.trim() || 'Self-Pay / Cash';
 
       setStepperStep(3);
     } else {
@@ -429,7 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Step 3 -> Phase 3 (Review & Confirmation)
   btnStep3Next.addEventListener('click', () => {
-    const validEmergency = validateField(stepEmergency, val => val.length >= 3);
+    const validEmergency = validateField(stepEmergency, val => isEmergencyContactValid(val));
     const validAllergies = validateField(stepAllergies, val => val.length >= 2);
 
     if (validEmergency && validAllergies) {
@@ -444,6 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       revDept.textContent = state.data.dept;
       revReason.textContent = state.data.reason;
+      revShift.textContent = state.data.shift;
       revHmo.textContent = state.data.hmo;
 
       revEmergency.textContent = state.data.emergency;
@@ -459,7 +514,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Phase 3: Review, Confirmation & Modal
   // ========================================================================
   btnConfBack.addEventListener('click', () => {
-    // Non-destructive return to edit stepper
     setPhase(2);
     setStepperStep(3);
   });
@@ -470,6 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalPatientName.textContent = state.data.fullname;
     modalDeptName.textContent = state.data.dept;
     modalReasonName.textContent = state.data.reason;
+    modalShiftName.textContent = state.data.shift;
 
     confirmBackdrop.classList.add('open');
     confirmBackdrop.setAttribute('aria-hidden', 'false');
@@ -504,7 +559,6 @@ document.addEventListener('DOMContentLoaded', () => {
   btnConfOpenModal.addEventListener('click', openConfirmationDialog);
   dialogCancel.addEventListener('click', closeConfirmationDialog);
 
-  // Close when clicking modal backdrop outside box
   confirmBackdrop.addEventListener('click', (e) => {
     if (e.target === confirmBackdrop) {
       closeConfirmationDialog();
@@ -515,15 +569,16 @@ document.addEventListener('DOMContentLoaded', () => {
   dialogConfirm.addEventListener('click', () => {
     closeConfirmationDialog();
 
-    // Generate unique reference code
+    // Generate unique clinical reference code
     const randomCode = Math.floor(1000 + Math.random() * 9000);
-    const refCode = `#MED-2026-${randomCode}`;
+    const refCode = `#CP-2026-${randomCode}`;
 
     slipRefCode.textContent = refCode;
     slipPatient.textContent = state.data.fullname;
     slipContact.textContent = `${state.data.email} · ${state.data.phone}`;
     slipDept.textContent = state.data.dept;
     slipReason.textContent = state.data.reason;
+    slipShift.textContent = state.data.shift;
 
     // Advance to Final Completion State
     setPhase(4);
@@ -537,6 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stepDob.value = '';
     stepDept.value = '';
     stepReason.value = '';
+    stepShift.value = 'Morning Shift (8:00 AM - 12:00 PM)';
     stepHmo.value = '';
     stepEmergency.value = '';
     stepAllergies.value = '';
