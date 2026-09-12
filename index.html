@@ -3,24 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connected HCI Flow: Auth ➔ Stepper ➔ Confirmation</title>
+  <title>CarePoint Clinic — Patient Portal & Consultation Booking</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- Header with Flow Status -->
+  <!-- Clinic Header & Flow Tracker -->
   <header class="flow-header">
-    <h1>Onboarding & Workspace Setup</h1>
-    <p>Connected 3-Phase Flow: Auth Form ➔ Multi-Step Stepper ➔ Action Confirmation</p>
+    <div style="display: inline-flex; align-items: center; gap: 8px; background: #E7F5F1; color: #0E7C66; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.04em;">
+      <span>🏥 CarePoint Medical Clinic</span>
+    </div>
+    <h1>Patient Portal & Intake System</h1>
+    <p>Sign in or register your patient account, select your department, and confirm your clinic booking.</p>
 
     <!-- Visual Breadcrumb / Flow Tracker -->
-    <nav class="flow-tracker" aria-label="Onboarding Progress">
+    <nav class="flow-tracker" aria-label="Patient Onboarding Progress">
       <div class="tracker-node active" id="node-1">
-        <span>1</span> Auth Form
+        <span>1</span> Patient Account
       </div>
       <span class="tracker-arrow">→</span>
       <div class="tracker-node" id="node-2">
-        <span>2</span> Workspace Stepper
+        <span>2</span> Clinic Intake
       </div>
       <span class="tracker-arrow">→</span>
       <div class="tracker-node" id="node-3">
@@ -32,15 +35,15 @@
   <!-- Interactive Testing & Error Simulation Toolbar -->
   <aside class="test-toolbar" aria-label="Testing Controls">
     <div class="test-toolbar-group">
-      <span style="font-weight: 700; color: #10141A;">Test Controls:</span>
-      <button type="button" class="test-btn" id="btn-fill-valid">Fill Valid Data</button>
+      <span style="font-weight: 700; color: #10141A;">Clinic Test Suite:</span>
+      <button type="button" class="test-btn" id="btn-fill-valid">Fill Sample Patient</button>
       <button type="button" class="test-btn" id="btn-fill-invalid">Trigger Errors</button>
       <button type="button" class="test-btn" id="btn-reset-flow">Reset Flow</button>
     </div>
     <div class="test-toolbar-group">
-      <label class="sim-error-label" title="Simulate an API failure on submission">
+      <label class="sim-error-label" title="Simulate a clinic system rejection or duplicate patient record">
         <input type="checkbox" id="sim-server-error">
-        <span>Simulate Server-Side Error</span>
+        <span>Simulate Clinic Server Error</span>
       </label>
     </div>
   </aside>
@@ -49,7 +52,7 @@
   <main class="flow-stage-container">
 
     <!-- ====================================================================
-         PHASE 1: AUTH FORM
+         PHASE 1: AUTH FORM (PATIENT ACCOUNT)
          ==================================================================== -->
     <section class="flow-stage active" id="stage-auth" aria-labelledby="auth-title">
       <form class="auth-form" id="auth-form" novalidate>
@@ -60,7 +63,7 @@
 
         <!-- Simulated Server Error Alert -->
         <div class="form-alert-error" id="auth-server-error" role="alert" aria-live="polite">
-          Server Error: This email address is already registered. Please use another or sign in.
+          Server Error: A patient record with this email already exists. Please use another email or sign in.
         </div>
 
         <!-- Full Name -->
@@ -70,35 +73,35 @@
             type="text" 
             id="auth-fullname" 
             name="fullname" 
-            placeholder="e.g. Jane Doe"
+            placeholder="e.g. Hazel Nandong"
             autocomplete="name"
             aria-describedby="auth-fullname-error"
           >
           <span class="error" id="auth-fullname-error">Enter your full name.</span>
         </div>
 
-        <!-- Work Email -->
+        <!-- Work Email / Patient Email -->
         <div class="field" id="field-auth-email">
           <label for="auth-email">Work email</label>
           <input 
             type="email" 
             id="auth-email" 
             name="email" 
-            placeholder="name@company.com"
+            placeholder="patient@example.com"
             autocomplete="email"
             aria-describedby="auth-email-error"
           >
           <span class="error" id="auth-email-error">Enter a valid email address.</span>
         </div>
 
-        <!-- Company (Optional) -->
+        <!-- Company / Insurance HMO (Optional) -->
         <div class="field" id="field-auth-company">
           <label for="auth-company">Company</label>
           <input 
             type="text" 
             id="auth-company" 
             name="company" 
-            placeholder="Acme Studio (optional)"
+            placeholder="PhilHealth / Maxicare / HMO (optional)"
             autocomplete="organization"
             aria-describedby="auth-company-helper"
           >
@@ -115,14 +118,14 @@
 
         <!-- Next Phase Advance Button -->
         <button type="button" class="proceed-btn" id="btn-proceed-stepper">
-          Continue to Join Workspace →
+          Continue to Clinic Intake →
         </button>
       </form>
     </section>
 
 
     <!-- ====================================================================
-         PHASE 2: STEPPER (MULTI-FORM)
+         PHASE 2: STEPPER (MULTI-FORM CLINIC INTAKE)
          ==================================================================== -->
     <section class="flow-stage" id="stage-stepper" aria-labelledby="stepper-title">
       <div class="card stepper-card" id="stepper-card">
@@ -142,7 +145,7 @@
 
         <!-- Server error banner in stepper -->
         <div class="form-alert-error" id="stepper-server-error" role="alert" aria-live="polite" style="margin-bottom: 12px;">
-          Error: Unable to connect to server. Please try again.
+          Error: Unable to verify clinic schedule. Please try again.
         </div>
 
         <!-- Step 1: Account (Pre-filled from Auth Form) -->
@@ -153,7 +156,7 @@
               <input 
                 type="text" 
                 id="step-name" 
-                placeholder="Jane Doe"
+                placeholder="Hazel Nandong"
                 aria-describedby="step-name-error"
               >
               <span class="error" id="step-name-error">Enter your full name.</span>
@@ -164,7 +167,7 @@
               <input 
                 type="email" 
                 id="step-email" 
-                placeholder="jane@example.com"
+                placeholder="patient@example.com"
                 aria-describedby="step-email-error"
               >
               <span class="error" id="step-email-error">Enter a valid email address.</span>
@@ -177,7 +180,7 @@
           </div>
         </div>
 
-        <!-- Step 2: Team details -->
+        <!-- Step 2: Team details (Clinic Department & Consultation Reason) -->
         <div class="panel" id="stepper-panel-2">
           <div class="stepper-fields">
             <div class="field" id="field-step-team">
@@ -185,7 +188,7 @@
               <input 
                 type="text" 
                 id="step-team" 
-                placeholder="Acme Studio"
+                placeholder="General Medicine Clinic"
                 aria-describedby="step-team-error"
               >
               <span class="error" id="step-team-error">Enter a team name (2+ characters).</span>
@@ -215,23 +218,23 @@
           
           <div class="review-summary">
             <div class="review-row">
-              <span class="k">Full name:</span>
+              <span class="k">Patient:</span>
               <span class="v" id="rev-name">—</span>
             </div>
             <div class="review-row">
-              <span class="k">Work email:</span>
+              <span class="k">Email:</span>
               <span class="v" id="rev-email">—</span>
             </div>
             <div class="review-row">
-              <span class="k">Company:</span>
+              <span class="k">Insurance/Company:</span>
               <span class="v" id="rev-company">—</span>
             </div>
             <div class="review-row">
-              <span class="k">Team:</span>
+              <span class="k">Clinic Team:</span>
               <span class="v" id="rev-team">—</span>
             </div>
             <div class="review-row">
-              <span class="k">Role:</span>
+              <span class="k">Consultation/Role:</span>
               <span class="v" id="rev-role">—</span>
             </div>
           </div>
@@ -257,12 +260,12 @@
         <h2 id="dialog-title">Confirm “Q3 roadmap”?</h2>
         <p id="dialog-desc">
           Selected: Q3 roadmap<br>
-          This permanently confirms and activates the workspace file. This action cannot be undone.
+          This permanently confirms your clinic appointment and intake record. This cannot be undone.
         </p>
 
         <!-- Error feedback within dialog if simulated failure occurs -->
         <div class="error" id="dialog-error-msg" style="margin-bottom: 12px; display: none;">
-          Action failed: Simulated server conflict. Please try again.
+          Action failed: Clinic schedule conflict detected. Please choose another slot.
         </div>
 
         <div class="dialog-actions">
@@ -275,39 +278,44 @@
     <!-- Final Completion Card (After Confirmation) -->
     <section class="final-success-card" id="final-card" aria-live="polite">
       <div class="final-icon">✓</div>
-      <h2>Setup Complete!</h2>
+      <h2>Appointment Confirmed!</h2>
       <p>Workspace created — you could always go back before submit.</p>
-      <div class="review-summary" style="text-align: left; margin: 4px 0 10px 0;">
-        <div class="review-row"><span class="k">Account:</span> <span class="v" id="final-account">—</span></div>
-        <div class="review-row"><span class="k">Team:</span> <span class="v" id="final-team">—</span></div>
-        <div class="review-row"><span class="k">Confirmed File:</span> <span class="v">Q3 roadmap</span></div>
+      
+      <div style="background: #F5F6F8; border: 1px dashed #C5CAD3; border-radius: 8px; padding: 14px; text-align: left; margin: 4px 0 10px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #DDE1E7; padding-bottom: 8px; margin-bottom: 8px;">
+          <span style="font-size: 11px; font-weight: 700; color: #5B616B; text-transform: uppercase;">Intake Reference</span>
+          <span style="font-size: 12px; font-weight: 700; color: #2F49E8;">#MED-2026-894</span>
+        </div>
+        <div class="review-row"><span class="k">Patient:</span> <span class="v" id="final-account">—</span></div>
+        <div class="review-row"><span class="k">Care Team:</span> <span class="v" id="final-team">—</span></div>
+        <div class="review-row"><span class="k">Intake File:</span> <span class="v">Q3 roadmap (Confirmed)</span></div>
+        <div class="review-row"><span class="k">Status:</span> <span class="v" style="color: #0E7C66;">Active / Confirmed</span></div>
       </div>
-      <button type="button" class="btn btn-primary" id="btn-restart-flow">Start Over</button>
+
+      <button type="button" class="btn btn-primary" id="btn-restart-flow">New Patient Intake</button>
     </section>
 
   </main>
 
   <!-- HCI Guidelines & Best Practices Reference -->
   <aside class="hci-notes">
-    <h3>HCI Design & Error Handling Architecture</h3>
+    <h3>HCI Design & Clinic System Architecture</h3>
     <div class="hci-grid">
       <div class="hci-item">
-        <strong>1. Sequential Single-Column Pathway</strong>
-        The user starts at the Auth Form, advances seamlessly to the Stepper with their account data carried forward, and finishes at the Confirmation modal. The path to completion is linear and focused.
+        <strong>1. Single-Column Path for Stress-Free Patient Intake</strong>
+        Patients seeking healthcare need low-friction, distraction-free forms. The vertical single-column stacks inputs directly above the primary button, avoiding skipped fields.
       </div>
       <div class="hci-item">
-        <strong>2. Multi-Layered Error Handling</strong>
-        • <em>Client-side:</em> Immediate inline error markers (`.field.invalid .error`) with red borders and helper explanations.<br>
-        • <em>Self-Healing:</em> Errors clear automatically as the user types.<br>
-        • <em>Simulated Server Error:</em> Toggle checkbox above lets you test realistic server rejection handling and recovery without breaking user flow.
+        <strong>2. Clean, Non-Repetitive Error Handling</strong>
+        Zero duplicate hints. Inputs show bold labels and subtle placeholder examples. If an error occurs, the single informative `.error` message appears in high-contrast `#B42318` red and immediately disappears upon typing.
       </div>
       <div class="hci-item">
         <strong>3. Non-Destructive Backward Navigation</strong>
-        Users can always click "Back" at any step (even back from the Stepper to Auth Form) without losing their entered data.
+        Patients can review their answers on Step 3 and safely navigate back to Step 1 or to the Account step without losing typed information.
       </div>
       <div class="hci-item">
-        <strong>4. Explicit Verb Confirmation</strong>
-        The confirmation dialog names the exact item ("Q3 roadmap") and action ("Confirm", "Cancel"), adhering to the HCI rule of eliminating ambiguous "OK" buttons.
+        <strong>4. Consequential Confirmation Verbs</strong>
+        The final modal specifies the exact intake record ("Q3 roadmap") and consequence, providing clear "Cancel" and "Confirm" buttons instead of ambiguous "OK" prompts.
       </div>
     </div>
   </aside>

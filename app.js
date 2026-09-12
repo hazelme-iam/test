@@ -352,21 +352,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Test Controls: Fill Valid / Fill Invalid / Reset
   // ========================================================================
   btnFillValid.addEventListener('click', () => {
-    authFullname.value = "Alex Morgan";
-    authEmail.value = "alex.morgan@designco.com";
-    authCompany.value = "DesignCo Inc.";
+    authFullname.value = "Hazel Nandong";
+    authEmail.value = "hazel.patient@example.com";
+    authCompany.value = "Maxicare HMO";
 
-    stepName.value = "Alex Morgan";
-    stepEmail.value = "alex.morgan@designco.com";
-    stepTeam.value = "Product Experience Team";
-    stepRole.value = "Lead Product Designer";
+    stepName.value = "Hazel Nandong";
+    stepEmail.value = "hazel.patient@example.com";
+    stepTeam.value = "General Medicine Clinic";
+    stepRole.value = "General Health Consultation";
 
     state.data = {
-      fullname: "Alex Morgan",
-      email: "alex.morgan@designco.com",
-      company: "DesignCo Inc.",
-      team: "Product Experience Team",
-      role: "Lead Product Designer"
+      fullname: "Hazel Nandong",
+      email: "hazel.patient@example.com",
+      company: "Maxicare HMO",
+      team: "General Medicine Clinic",
+      role: "General Health Consultation"
     };
 
     // Remove any invalid markers
