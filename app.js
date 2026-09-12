@@ -49,11 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // DOM Elements: Tracker & Stages
-  const node1 = document.getElementById('node-1');
-  const node2 = document.getElementById('node-2');
-  const node3 = document.getElementById('node-3');
-
+  // DOM Elements: Stages
   const stageAuth = document.getElementById('stage-auth');
   const stageStepper = document.getElementById('stage-stepper');
   const stageConfirmation = document.getElementById('stage-confirmation');
@@ -151,24 +147,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ========================================================================
   // Philippine Phone Validation & Formatting Helpers
-  // Standard format: 09XXXXXXXXX (11 digits) or +639XXXXXXXXX
+  // Standard format: 09XXXXXXXXX (strictly 11 digits, starting with 09)
   // ========================================================================
   function isPHMobileValid(phone) {
     if (!phone) return false;
-    const clean = phone.replace(/[\s\-\(\)\.]/g, '');
-    return /^(09\d{9}|\+639\d{9}|639\d{9})$/.test(clean);
+    const digits = phone.replace(/\D/g, '');
+    return /^09\d{9}$/.test(digits);
   }
 
   function formatPHMobile(phone) {
-    const clean = phone.replace(/[\s\-\(\)\.]/g, '');
-    if (/^09\d{9}$/.test(clean)) {
-      return `${clean.slice(0, 4)} ${clean.slice(4, 7)} ${clean.slice(7)}`;
+    let digits = (phone || '').replace(/\D/g, '');
+    if (digits.startsWith('639') && digits.length === 12) {
+      digits = '0' + digits.slice(2);
     }
-    if (/^\+639\d{9}$/.test(clean)) {
-      return `+63 ${clean.slice(3, 6)} ${clean.slice(6, 9)} ${clean.slice(9)}`;
-    }
-    if (/^639\d{9}$/.test(clean)) {
-      return `+63 ${clean.slice(2, 5)} ${clean.slice(5, 8)} ${clean.slice(8)}`;
+    if (digits.length === 11 && digits.startsWith('09')) {
+      return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
     }
     return phone;
   }
@@ -178,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (text.length < 5) return false;
     const hasLetters = /[a-zA-Z]{2,}/.test(text);
     const cleanDigits = text.replace(/\D/g, '');
-    const hasPhone = cleanDigits.length >= 10;
+    const hasPhone = /09\d{9}/.test(cleanDigits);
     return hasLetters && hasPhone;
   }
 
@@ -201,25 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
     stageStepper.classList.toggle('active', phase === 2);
     stageConfirmation.classList.toggle('active', phase === 3);
     finalCard.classList.toggle('show', phase === 4);
-
-    // Update Progress Tracker
-    if (phase === 1) {
-      node1.className = 'tracker-node active';
-      node2.className = 'tracker-node';
-      node3.className = 'tracker-node';
-    } else if (phase === 2) {
-      node1.className = 'tracker-node done';
-      node2.className = 'tracker-node active';
-      node3.className = 'tracker-node';
-    } else if (phase === 3) {
-      node1.className = 'tracker-node done';
-      node2.className = 'tracker-node done';
-      node3.className = 'tracker-node active';
-    } else if (phase === 4) {
-      node1.className = 'tracker-node done';
-      node2.className = 'tracker-node done';
-      node3.className = 'tracker-node done';
-    }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -289,7 +263,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Auto-format Philippine mobile number on blur
+  // Strictly limit to 11 numbers and auto-format as 09XX XXX XXXX
+  stepPhone.addEventListener('input', () => {
+    let digits = stepPhone.value.replace(/\D/g, '');
+    // If international 639 was pasted, convert to 09
+    if (digits.startsWith('639') && digits.length >= 12) {
+      digits = '0' + digits.slice(2);
+    }
+    // Limit to strictly 11 digits
+    if (digits.length > 11) {
+      digits = digits.slice(0, 11);
+    }
+    // Format into 09XX XXX XXXX mask
+    if (digits.length > 7) {
+      stepPhone.value = `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
+    } else if (digits.length > 4) {
+      stepPhone.value = `${digits.slice(0, 4)} ${digits.slice(4)}`;
+    } else {
+      stepPhone.value = digits;
+    }
+  });
+
+  // Re-verify on blur
   stepPhone.addEventListener('blur', () => {
     if (isPHMobileValid(stepPhone.value)) {
       stepPhone.value = formatPHMobile(stepPhone.value);

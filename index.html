@@ -20,21 +20,6 @@
     </div>
     <h1>Patient Registration & Intake System</h1>
     <p>Sign in or register your patient account, complete the clinical intake form, and confirm your outpatient consultation.</p>
-
-    <!-- Visual 3-Stage Progress Breadcrumb -->
-    <nav class="flow-tracker" aria-label="Registration Progress">
-      <div class="tracker-node active" id="node-1">
-        <span>1</span> Authentication
-      </div>
-      <span class="tracker-arrow">&rsaquo;</span>
-      <div class="tracker-node" id="node-2">
-        <span>2</span> Information Form
-      </div>
-      <span class="tracker-arrow">&rsaquo;</span>
-      <div class="tracker-node" id="node-3">
-        <span>3</span> Confirmation
-      </div>
-    </nav>
   </header>
 
   <!-- Flow Stages Container -->
@@ -221,11 +206,12 @@
               <input 
                 type="tel" 
                 id="step-phone" 
-                placeholder="0917 123 4567"
-                maxlength="16"
+                placeholder="09XX XXX XXXX"
+                maxlength="13"
+                inputmode="numeric"
                 aria-describedby="step-phone-error"
               >
-              <span class="error" id="step-phone-error">Enter a valid 11-digit Philippine mobile number starting with 09 (e.g. 0917 123 4567).</span>
+              <span class="error" id="step-phone-error">Enter a valid 11-digit Philippine mobile number starting with 09 (e.g. 09XX XXX XXXX).</span>
             </div>
 
             <div class="field" id="field-step-dob">
@@ -308,10 +294,10 @@
               <input 
                 type="text" 
                 id="step-emergency" 
-                placeholder="e.g. Juan Dela Cruz - 0918 987 6543"
+                placeholder="e.g. Juan Dela Cruz - 09XX XXX XXXX"
                 aria-describedby="step-emergency-error"
               >
-              <span class="error" id="step-emergency-error">Enter emergency contact name and valid 11-digit Philippine phone (e.g. Juan Dela Cruz - 0918 987 6543).</span>
+              <span class="error" id="step-emergency-error">Enter emergency contact name and 11-digit Philippine phone (e.g. Juan Dela Cruz - 09XX XXX XXXX).</span>
             </div>
 
             <div class="field" id="field-step-allergies">
