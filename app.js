@@ -78,12 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const node2 = document.getElementById('node-2');
   const node3 = document.getElementById('node-3');
 
-  // Testing Toolbar
-  const simServerError = document.getElementById('sim-server-error');
-  const btnFillValid = document.getElementById('btn-fill-valid');
-  const btnFillInvalid = document.getElementById('btn-fill-invalid');
-  const btnResetFlow = document.getElementById('btn-reset-flow');
-
   let lastFocusedElement = null;
 
   // ========================================================================
@@ -194,19 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!validName || !validEmail) {
       authOk.classList.remove('show');
       btnProceedStepper.classList.remove('show');
-      // HCI: Focus first invalid field
       authForm.querySelector('.field.invalid input')?.focus();
-      return;
-    }
-
-    // Check for simulated server-side failure
-    if (simServerError.checked) {
-      authServerError.textContent = "Server Error: Email address already registered in this organization. Please use another.";
-      authServerError.classList.add('show');
-      authOk.classList.remove('show');
-      btnProceedStepper.classList.remove('show');
-      authEmail.closest('.field').classList.add('invalid');
-      authEmail.focus();
       return;
     }
 
@@ -320,14 +302,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   dialogConfirm.addEventListener('click', () => {
-    // Check for simulated server-side error during confirmation
-    if (simServerError.checked) {
-      dialogErrorMsg.textContent = "Server Error: Unable to provision workspace. Please retry.";
-      dialogErrorMsg.style.display = 'block';
-      dialogConfirm.focus();
-      return;
-    }
-
     // Success!
     closeConfirmationDialog();
 
@@ -343,59 +317,6 @@ document.addEventListener('DOMContentLoaded', () => {
   confirmBackdrop.addEventListener('click', (e) => {
     if (e.target === confirmBackdrop) {
       closeConfirmationDialog();
-    }
-  });
-
-  btnRestartFlow.addEventListener('click', resetEntireFlow);
-
-  // ========================================================================
-  // Test Controls: Fill Valid / Fill Invalid / Reset
-  // ========================================================================
-  btnFillValid.addEventListener('click', () => {
-    authFullname.value = "Hazel Nandong";
-    authEmail.value = "hazel.patient@example.com";
-    authCompany.value = "Maxicare HMO";
-
-    stepName.value = "Hazel Nandong";
-    stepEmail.value = "hazel.patient@example.com";
-    stepTeam.value = "General Medicine Clinic";
-    stepRole.value = "General Health Consultation";
-
-    state.data = {
-      fullname: "Hazel Nandong",
-      email: "hazel.patient@example.com",
-      company: "Maxicare HMO",
-      team: "General Medicine Clinic",
-      role: "General Health Consultation"
-    };
-
-    // Remove any invalid markers
-    document.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
-    authServerError.classList.remove('show');
-    stepperServerError.classList.remove('show');
-    dialogErrorMsg.style.display = 'none';
-
-    // Submit Phase 1 to activate ready state
-    authOk.textContent = "Account details look good — ready to continue.";
-    authOk.classList.add('show');
-    btnProceedStepper.classList.add('show');
-  });
-
-  btnFillInvalid.addEventListener('click', () => {
-    if (state.currentPhase === 1) {
-      authFullname.value = "J"; // Too short
-      authEmail.value = "invalid-email"; // Malformed
-      authForm.dispatchEvent(new Event('submit'));
-    } else if (state.currentPhase === 2) {
-      if (state.stepperStep === 1) {
-        stepName.value = "A";
-        stepEmail.value = "bad@";
-        btnStep1Next.click();
-      } else if (state.stepperStep === 2) {
-        stepTeam.value = "X";
-        stepRole.value = "";
-        btnStep2Next.click();
-      }
     }
   });
 
@@ -421,5 +342,5 @@ document.addEventListener('DOMContentLoaded', () => {
     authFullname.focus();
   }
 
-  btnResetFlow.addEventListener('click', resetEntireFlow);
+  btnRestartFlow.addEventListener('click', resetEntireFlow);
 });
