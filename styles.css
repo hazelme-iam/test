@@ -218,31 +218,67 @@ body {
 }
 
 /* ==========================================================================
-   Card Container (Single-Column)
+   Card Container (Single-Column & Modern Website Login Styling)
    ========================================================================== */
 .card {
   background: var(--card-bg);
   border: 1px solid var(--border-card);
-  border-radius: 10px;
-  padding: 22px;
-  width: min(390px, 100%);
+  border-radius: 12px;
+  padding: 24px;
+  width: min(410px, 100%);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-theme="dark"] .card {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
 }
 
 .card h1 {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   margin: 0 0 4px;
   font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.35;
 }
 
 .lede {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 12.5px;
   margin: 0 0 16px;
   line-height: 1.45;
+}
+
+/* Clinic Brand Header inside Auth Card */
+.auth-brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-card);
+}
+
+.auth-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+
+.auth-brand-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--input-bg);
+  padding: 3px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border-card);
 }
 
 /* Auth Segmented Switch (Log In vs Register) */
@@ -268,12 +304,13 @@ body {
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: inherit;
+  text-align: center;
 }
 
 .auth-tab.active {
   background: var(--card-bg);
   color: var(--primary);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .auth-panel {
@@ -284,6 +321,202 @@ body {
 
 .auth-panel.active {
   display: flex;
+}
+
+/* Password Field with Show/Hide Toggle */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  padding-right: 42px;
+}
+
+.btn-toggle-password {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.btn-toggle-password:hover {
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .btn-toggle-password:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-toggle-password:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.eye-icon {
+  pointer-events: none;
+}
+
+.eye-icon.icon-eye-off {
+  display: none;
+}
+
+.btn-toggle-password.showing .icon-eye {
+  display: none;
+}
+
+.btn-toggle-password.showing .icon-eye-off {
+  display: block;
+}
+
+/* Remember Me & Forgot Password Utilities */
+.auth-util-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  margin-top: -2px;
+}
+
+.remember-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 12px;
+  user-select: none;
+}
+
+.remember-checkbox input {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: var(--primary);
+  margin: 0;
+}
+
+.auth-link-subtle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: inherit;
+}
+
+.auth-link-subtle:hover {
+  color: var(--primary-hover);
+}
+
+.forgot-notice {
+  display: none;
+  background: var(--summary-bg);
+  border: 1px solid var(--border-card);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  animation: fadeIn 0.18s ease;
+}
+
+.forgot-notice.show {
+  display: block;
+}
+
+/* 1-Click Sandbox / Demo Helper */
+.demo-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--input-bg);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 4px;
+  gap: 8px;
+}
+
+.demo-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.demo-pill {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  background: rgba(47, 73, 232, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .demo-pill {
+  background: rgba(107, 130, 245, 0.2);
+}
+
+.demo-creds {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.btn-autofill-demo {
+  background: var(--card-bg);
+  border: 1px solid var(--border-card);
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.btn-autofill-demo:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--summary-bg);
+}
+
+/* Security & DPA Compliance Footer */
+.auth-security-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-card);
+  text-align: center;
 }
 
 /* ==========================================================================
@@ -805,33 +1038,4 @@ button.submit:hover {
   background: #6B82F5;
 }
 
-/* HCI Notes */
-.hci-notes {
-  max-width: 500px;
-  width: 100%;
-  background: var(--card-bg);
-  border: 1px solid var(--border-card);
-  border-radius: 10px;
-  padding: 16px 20px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text-muted);
-}
 
-.hci-notes h3 {
-  font-size: 14px;
-  margin: 0 0 8px 0;
-  color: var(--text-primary);
-}
-
-.hci-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-.hci-item strong {
-  color: var(--text-primary);
-  display: block;
-  margin-bottom: 2px;
-}

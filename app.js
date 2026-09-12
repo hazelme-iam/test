@@ -332,6 +332,49 @@ document.addEventListener('DOMContentLoaded', () => {
   linkGoRegister.addEventListener('click', () => setAuthMode('register'));
   linkGoSignin.addEventListener('click', () => setAuthMode('signin'));
 
+  // Show / Hide Password Toggle Handler
+  function setupPasswordToggle(buttonId, inputId) {
+    const btn = document.getElementById(buttonId);
+    const input = document.getElementById(inputId);
+    if (!btn || !input) return;
+
+    btn.addEventListener('click', () => {
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      btn.classList.toggle('showing', isPassword);
+      const newLabel = isPassword ? 'Hide password' : 'Show password';
+      btn.setAttribute('aria-label', newLabel);
+      btn.setAttribute('title', newLabel);
+      input.focus();
+    });
+  }
+
+  setupPasswordToggle('toggle-signin-password', 'signin-password');
+  setupPasswordToggle('toggle-reg-password', 'reg-password');
+
+  // Forgot password notice handler
+  const linkForgotPass = document.getElementById('link-forgot-pass');
+  const forgotNotice = document.getElementById('forgot-notice');
+  if (linkForgotPass && forgotNotice) {
+    linkForgotPass.addEventListener('click', (e) => {
+      e.preventDefault();
+      forgotNotice.classList.toggle('show');
+    });
+  }
+
+  // 1-Click Demo Sandbox Autofill
+  const btnAutofillDemo = document.getElementById('btn-autofill-demo');
+  if (btnAutofillDemo) {
+    btnAutofillDemo.addEventListener('click', () => {
+      signinEmail.value = 'maria.santos@carepoint.ph';
+      signinPassword.value = 'patient123';
+      signinEmail.closest('.field')?.classList.remove('invalid');
+      signinPassword.closest('.field')?.classList.remove('invalid');
+      signinError?.classList.remove('show');
+      signinPassword.focus();
+    });
+  }
+
   // 1A: Sign In Submission
   formSignin.addEventListener('submit', (e) => {
     e.preventDefault();

@@ -44,7 +44,18 @@
          PHASE 1: AUTHENTICATION (SIGN IN & REGISTRATION FORMS)
          ==================================================================== -->
     <section class="flow-stage active" id="stage-auth" aria-labelledby="auth-main-title">
-      <div class="card">
+      <div class="card auth-card">
+        <!-- Clinic Portal Brand Header inside Card -->
+        <div class="auth-brand">
+          <div class="auth-brand-badge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2v20M2 12h20"></path>
+            </svg>
+            <span>CarePoint Health</span>
+          </div>
+          <span class="auth-brand-tag">Patient Portal</span>
+        </div>
+
         <!-- Segmented Tab Switcher between Sign In and Registration -->
         <div class="auth-switch" role="tablist">
           <button type="button" class="auth-tab active" id="tab-signin" role="tab" aria-selected="true">Sign In</button>
@@ -53,9 +64,9 @@
 
         <!-- 1A: SIGN IN FORM -->
         <form class="auth-panel active" id="form-signin" novalidate>
-          <header>
+          <header class="auth-header">
             <h1 id="auth-main-title">Patient Portal Sign In</h1>
-            <p class="lede">Sign in with your registered patient email and password.</p>
+            <p class="lede">Access your medical appointments, triage records, and clinical intake forms.</p>
           </header>
 
           <div class="form-alert-error" id="signin-error" role="alert" aria-live="polite">
@@ -76,33 +87,67 @@
 
           <div class="field" id="field-signin-password">
             <label for="signin-password">Password</label>
-            <input 
-              type="password" 
-              id="signin-password" 
-              placeholder="Enter your password" 
-              autocomplete="current-password"
-              aria-describedby="signin-password-error"
-            >
+            <div class="password-input-wrapper">
+              <input 
+                type="password" 
+                id="signin-password" 
+                placeholder="Enter your password" 
+                autocomplete="current-password"
+                aria-describedby="signin-password-error"
+              >
+              <button type="button" class="btn-toggle-password" id="toggle-signin-password" aria-label="Show password" title="Show password">
+                <svg class="eye-icon icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-icon icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                  <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                  <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                  <line x1="2" y1="2" x2="22" y2="22"></line>
+                </svg>
+              </button>
+            </div>
             <span class="error" id="signin-password-error">Enter your password.</span>
           </div>
 
-          <button type="submit" class="btn-submit" id="btn-submit-signin">Sign In</button>
+          <!-- Remember me & Forgot password -->
+          <div class="auth-util-row">
+            <label class="remember-checkbox" for="signin-remember">
+              <input type="checkbox" id="signin-remember" name="remember" checked>
+              <span>Remember me</span>
+            </label>
+            <button type="button" class="auth-link-subtle" id="link-forgot-pass">Forgot password?</button>
+          </div>
+
+          <div class="forgot-notice" id="forgot-notice" role="status" aria-live="polite">
+            To reset your patient account password, please visit the CarePoint Outpatient Helpdesk on the 2nd floor or call triage at <strong>(02) 8888-CARE</strong>.
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-submit-signin">Sign In to Portal</button>
 
           <div class="auth-subtext">
             Don't have an account yet? 
             <button type="button" class="auth-link" id="link-go-register">Create an account</button>
           </div>
 
-          <div style="background: #F5F6F8; border: 1px solid #DDE1E7; border-radius: 6px; padding: 8px 10px; font-size: 11.5px; color: #5B616B; margin-top: 4px; text-align: center;">
-            Demo account: <strong>maria.santos@carepoint.ph</strong> / <strong>patient123</strong>
+          <!-- Quick 1-Click Demo Sandbox Helper -->
+          <div class="demo-box">
+            <div class="demo-content">
+              <span class="demo-pill">Sandbox Mode</span>
+              <span class="demo-creds">maria.santos@carepoint.ph</span>
+            </div>
+            <button type="button" class="btn-autofill-demo" id="btn-autofill-demo" title="Auto-fill demo credentials">
+              Auto-fill
+            </button>
           </div>
         </form>
 
         <!-- 1B: REGISTRATION FORM -->
         <form class="auth-panel" id="form-register" novalidate>
-          <header>
+          <header class="auth-header">
             <h1>Create Patient Account</h1>
-            <p class="lede">Single-column layout &mdash; one path from top to submit.</p>
+            <p class="lede">Register your patient profile once to book appointments and track triage status.</p>
           </header>
 
           <div class="form-alert-error" id="register-error" role="alert" aria-live="polite">
@@ -134,14 +179,28 @@
           </div>
 
           <div class="field" id="field-reg-password">
-            <label for="reg-password">Password</label>
-            <input 
-              type="password" 
-              id="reg-password" 
-              placeholder="At least 6 characters" 
-              autocomplete="new-password"
-              aria-describedby="reg-password-error"
-            >
+            <label for="reg-password">Create password</label>
+            <div class="password-input-wrapper">
+              <input 
+                type="password" 
+                id="reg-password" 
+                placeholder="At least 6 characters" 
+                autocomplete="new-password"
+                aria-describedby="reg-password-error"
+              >
+              <button type="button" class="btn-toggle-password" id="toggle-reg-password" aria-label="Show password" title="Show password">
+                <svg class="eye-icon icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-icon icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                  <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                  <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                  <line x1="2" y1="2" x2="22" y2="22"></line>
+                </svg>
+              </button>
+            </div>
             <span class="error" id="reg-password-error">Password must be at least 6 characters.</span>
           </div>
 
@@ -154,10 +213,10 @@
               autocomplete="organization"
               aria-describedby="reg-company-helper"
             >
-            <span class="field-helper" id="reg-company-helper">Company is optional &mdash; leave blank or type a name.</span>
+            <span class="field-helper" id="reg-company-helper">Company or HMO is optional &mdash; leave blank or type a name.</span>
           </div>
 
-          <button type="submit" class="btn-submit" id="btn-submit-register">Create Account</button>
+          <button type="submit" class="btn-submit" id="btn-submit-register">Create Account &amp; Continue</button>
 
           <div class="ok" id="reg-ok" role="status" aria-live="polite">
             Account details look good &mdash; ready to continue.
@@ -168,6 +227,15 @@
             <button type="button" class="auth-link" id="link-go-signin">Sign in</button>
           </div>
         </form>
+
+        <!-- Security & DPA Compliance Badge -->
+        <div class="auth-security-footer">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>256-bit SSL Encrypted &middot; PhilHealth &amp; DPA 2012 Certified</span>
+        </div>
       </div>
     </section>
 
@@ -511,24 +579,7 @@
     </div>
   </section>
 
-  <!-- HCI Guidelines & Best Practices Reference -->
-  <aside class="hci-notes">
-    <h3>HCI Design &amp; Clinic Architecture Standards</h3>
-    <div class="hci-grid">
-      <div class="hci-item">
-        <strong>1. Single-Column Hierarchy &amp; Non-Distracting Layout</strong>
-        Users start at Authentication and move linearly into the Information Stepper. No emojis or decorative distractions, ensuring a professional, clean medical environment.
-      </div>
-      <div class="hci-item">
-        <strong>2. Standard Philippine Mobile Phone Validation</strong>
-        Phone input validates standard 11-digit Philippine mobile numbers starting with 09 (e.g. 0917 123 4567) or +639, with inline error feedback.
-      </div>
-      <div class="hci-item">
-        <strong>3. Non-Destructive Stepper Navigation &amp; Review</strong>
-        Progress bars display current position. Users can review all entered details in Phase 3 and click "Back to Edit" without erasing typed data.
-      </div>
-    </div>
-  </aside>
+
 
   <script src="app.js"></script>
 </body>
