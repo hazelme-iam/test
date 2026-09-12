@@ -1,46 +1,62 @@
-# Connected HCI Flow: Auth Form ➔ Workspace Stepper ➔ Confirmation
+# CarePoint Health Clinic — Patient Registration & Intake System
 
-This project implements a connected onboarding flow following strict Human-Computer Interaction (HCI) standards, accessible markup, and comprehensive error handling.
-
-## The 3-Phase Connected Workflow
-
-```
-[ Phase 1: Auth Form ] ──▶ [ Phase 2: Stepper Multi-Form ] ──▶ [ Phase 3: Confirmation Dialog ]
-```
-
-1. **Phase 1: Single-Column Auth Form (`Create account`)**
-   - Single-column vertical layout: `Full name`, `Work email`, and `Company (optional)`.
-   - **Error Handling**: Missing name or malformed email highlights fields with red borders (`#B42318`) and displays inline `.error` text. Focus automatically jumps to the first invalid field.
-   - **Dynamic Recovery**: Errors dismiss automatically in real-time as the user types valid information.
-   - **Advance to Stepper**: On valid submission, shows the green `.ok` confirmation banner (`"Account details look good — ready to continue."`) and activates `"Continue to Join Workspace →"`.
-
-2. **Phase 2: Stepper Multi-Form (`Join workspace`)**
-   - Automatically pre-populates the user's name and email from Phase 1.
-   - **Step 1 of 3 (Account)**: Review/edit name and email with validation before proceeding. Includes a `"Back to Auth"` button to return to Phase 1 without data loss.
-   - **Step 2 of 3 (Team details)**: Validates `Team name` (2+ characters) and `Your role` (Placeholder: `e.g. Designer`). Provides `"Back"` button to return to Step 1.
-   - **Step 3 of 3 (Review & Submit)**: Summary review card displaying all entered details (Name, Email, Company, Team, Role). Clicking `"Submit"` triggers Phase 3.
-
-3. **Phase 3: Confirmation Dialog (Modal)**
-   - Displays modal backdrop with explicit verbs (`Confirm` and `Cancel`), eliminating ambiguous "OK" buttons.
-   - Headings: `Confirm “Q3 roadmap”?`, `Selected: Q3 roadmap`.
-   - Clicking `"Cancel"` closes the dialog and keeps the user on Step 3 of the stepper so they can edit.
-   - Clicking `"Confirm"` completes the onboarding, marking all tracker nodes complete and showing the final setup card.
+A modern, accessible outpatient clinic portal designed following Human-Computer Interaction (HCI) principles. The system connects patient account authentication, multi-step clinical intake, and consultation booking confirmation into a smooth, linear experience.
 
 ---
 
-## Interactive Testing Toolbar
+## Overview
 
-At the top of `index.html`, you will find dedicated test controls:
-- **"Trigger Errors"**: Instantly inputs invalid data and submits, letting you observe all validation and error states immediately.
-- **"Simulate Server-Side Error"**: A checkbox toggle that simulates server rejections (e.g. "Email already registered" or "Network timeout"), demonstrating graceful server error recovery.
-- **"Fill Valid Data"**: Automatically pre-fills valid information to speed through end-to-end testing.
-- **"Reset Flow"**: Restores everything to the initial clean state.
+The application provides patients with a reliable, structured way to sign up or log in, fill out clinical intake requirements step-by-step, and verify their details before booking an outpatient consultation.
+
+### The 3 Connected Stages
+
+```
+[ 1. Authentication ] ──▶ [ 2. Information Stepper ] ──▶ [ 3. Review & Confirmation ]
+```
 
 ---
 
-## Running the Application
+## Stage Breakdown
 
-Open `index.html` in any browser:
+### 1. Authentication (Sign In & Registration)
+- **Account Sign In**: Allows registered patients to access their profile using their email and password.
+- **New Account Registration**: Allows new patients to register with their full name, email, password, and optional HMO/insurance provider.
+- **Seamless Transition**: Account details automatically carry over into the clinical intake form upon submission.
+
+### 2. Information Form (Clinical Intake Stepper)
+A guided multi-step form that breaks clinical data collection into logical, manageable sections:
+- **Step 1: Personal & Contact Information**
+  - Full name, email address, date of birth, and standard 11-digit Philippine mobile number (`09XX XXX XXXX`).
+- **Step 2: Clinic & Consultation**
+  - Department selection (e.g., Internal Medicine, Pediatrics, Cardiology, Dental, OB-GYN, Dermatology) and consultation reason.
+- **Step 3: Medical History & Emergency Contacts**
+  - Separate fields for emergency contact person's full name and Philippine mobile number.
+  - Drug allergies, medical conditions, or health notes.
+- **Non-Destructive Navigation**: Patients can navigate back and forth between steps without losing any previously entered data.
+
+### 3. Review & Confirmation
+- **Summary Review**: Presents a complete summary card of all entered personal, clinical, and emergency contact details for review.
+- **Accessible Verification Dialog**: A confirmation modal displays essential booking details with clear action buttons (`Cancel` and `Confirm & Submit`).
+- **Official Clinic Slip**: Upon confirmation, generates an official intake slip with a unique reference number (`#CP-2026-XXXX`), triage status, and clinic arrival instructions.
+
+---
+
+## Key HCI & Design Features
+
+- **Single-Column Form Hierarchy**: Forms follow a clear single-column vertical path from top to bottom, minimizing cognitive load.
+- **Immediate, Non-Punitive Error Feedback**: Clear inline error messages appear when required fields are missing or invalid, and automatically dismiss as the user corrects their input.
+- **Philippine Mobile Number Formatting**: Automatic masking and strict validation for 11-digit Philippine mobile numbers starting with `09` (e.g., `09XX XXX XXXX`).
+- **Dedicated Light & Dark Themes**: Dual-palette color system designed specifically for both light and dark environments, toggled via accessible SVG icons.
+- **Clean Professional Aesthetic**: Strictly avoids emojis and visual distractions, maintaining a professional medical standard.
+
+---
+
+## Getting Started
+
+Open `index.html` in any modern web browser:
+
 ```powershell
-Start-Process "c:\Users\User\OneDrive\Desktop\ui\index.html"
+Start-Process "index.html"
 ```
+
+No build step or external dependencies are required; the application runs entirely on vanilla HTML5, CSS3, and JavaScript.
