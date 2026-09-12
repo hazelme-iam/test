@@ -44,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
       reason: '',
       shift: '',
       hmo: '',
-      emergency: '',
+      emergencyName: '',
+      emergencyPhone: '',
       allergies: ''
     }
   };
@@ -95,7 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const stepShift = document.getElementById('step-shift');
   const stepHmo = document.getElementById('step-hmo');
 
-  const stepEmergency = document.getElementById('step-emergency');
+  const stepEmergencyName = document.getElementById('step-emergency-name');
+  const stepEmergencyPhone = document.getElementById('step-emergency-phone');
   const stepAllergies = document.getElementById('step-allergies');
 
   const btnStepperBackToAuth = document.getElementById('btn-stepper-back-to-auth');
@@ -114,7 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const revReason = document.getElementById('rev-reason');
   const revShift = document.getElementById('rev-shift');
   const revHmo = document.getElementById('rev-hmo');
-  const revEmergency = document.getElementById('rev-emergency');
+  const revEmergencyName = document.getElementById('rev-emergency-name');
+  const revEmergencyPhone = document.getElementById('rev-emergency-phone');
   const revAllergies = document.getElementById('rev-allergies');
 
   const btnConfBack = document.getElementById('btn-conf-back');
@@ -250,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     regFullname, regEmail, regPassword, regCompany,
     stepName, stepEmail, stepPhone, stepDob,
     stepDept, stepReason, stepShift, stepHmo,
-    stepEmergency, stepAllergies
+    stepEmergencyName, stepEmergencyPhone, stepAllergies
   ];
 
   allInputs.forEach(inp => {
@@ -264,32 +267,38 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Strictly limit to 11 numbers and auto-format as 09XX XXX XXXX
-  stepPhone.addEventListener('input', () => {
-    let digits = stepPhone.value.replace(/\D/g, '');
-    // If international 639 was pasted, convert to 09
-    if (digits.startsWith('639') && digits.length >= 12) {
-      digits = '0' + digits.slice(2);
-    }
-    // Limit to strictly 11 digits
-    if (digits.length > 11) {
-      digits = digits.slice(0, 11);
-    }
-    // Format into 09XX XXX XXXX mask
-    if (digits.length > 7) {
-      stepPhone.value = `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
-    } else if (digits.length > 4) {
-      stepPhone.value = `${digits.slice(0, 4)} ${digits.slice(4)}`;
-    } else {
-      stepPhone.value = digits;
-    }
-  });
+  function attachPhoneFormatter(inputEl) {
+    if (!inputEl) return;
+    inputEl.addEventListener('input', () => {
+      let digits = inputEl.value.replace(/\D/g, '');
+      // If international 639 was pasted, convert to 09
+      if (digits.startsWith('639') && digits.length >= 12) {
+        digits = '0' + digits.slice(2);
+      }
+      // Limit to strictly 11 digits
+      if (digits.length > 11) {
+        digits = digits.slice(0, 11);
+      }
+      // Format into 09XX XXX XXXX mask
+      if (digits.length > 7) {
+        inputEl.value = `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
+      } else if (digits.length > 4) {
+        inputEl.value = `${digits.slice(0, 4)} ${digits.slice(4)}`;
+      } else {
+        inputEl.value = digits;
+      }
+    });
 
-  // Re-verify on blur
-  stepPhone.addEventListener('blur', () => {
-    if (isPHMobileValid(stepPhone.value)) {
-      stepPhone.value = formatPHMobile(stepPhone.value);
-    }
-  });
+    // Re-verify on blur
+    inputEl.addEventListener('blur', () => {
+      if (isPHMobileValid(inputEl.value)) {
+        inputEl.value = formatPHMobile(inputEl.value);
+      }
+    });
+  }
+
+  attachPhoneFormatter(stepPhone);
+  attachPhoneFormatter(stepEmergencyPhone);
 
   // ========================================================================
   // Phase 1: Authentication Logic (Sign In vs Register Toggle)
@@ -478,11 +487,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Step 3 -> Phase 3 (Review & Confirmation)
   btnStep3Next.addEventListener('click', () => {
-    const validEmergency = validateField(stepEmergency, val => isEmergencyContactValid(val));
+    const validEmergName = validateField(stepEmergencyName, val => val.length >= 2);
+    const validEmergPhone = validateField(stepEmergencyPhone, val => isPHMobileValid(val));
     const validAllergies = validateField(stepAllergies, val => val.length >= 2);
 
-    if (validEmergency && validAllergies) {
-      state.data.emergency = stepEmergency.value.trim();
+    if (validEmergName && validEmergPhone && validAllergies) {
+      state.data.emergencyName = stepEmergencyName.value.trim();
+      state.data.emergencyPhone = formatPHMobile(stepEmergencyPhone.value.trim());
       state.data.allergies = stepAllergies.value.trim();
 
       // Populate Summary Review in Phase 3
@@ -496,7 +507,8 @@ document.addEventListener('DOMContentLoaded', () => {
       revShift.textContent = state.data.shift;
       revHmo.textContent = state.data.hmo;
 
-      revEmergency.textContent = state.data.emergency;
+      revEmergencyName.textContent = state.data.emergencyName;
+      revEmergencyPhone.textContent = state.data.emergencyPhone;
       revAllergies.textContent = state.data.allergies;
 
       setPhase(3);
@@ -589,7 +601,8 @@ document.addEventListener('DOMContentLoaded', () => {
     stepReason.value = '';
     stepShift.value = 'Morning Shift (8:00 AM - 12:00 PM)';
     stepHmo.value = '';
-    stepEmergency.value = '';
+    stepEmergencyName.value = '';
+    stepEmergencyPhone.value = '';
     stepAllergies.value = '';
 
     document.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
@@ -602,7 +615,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Theme Manager: Dedicated Light & Dark Palettes (Not simple inversion)
   // ========================================================================
   const themeToggleBtn = document.getElementById('theme-toggle-btn');
-  const themeModeLabel = document.getElementById('theme-mode-label');
   const btnDemoLight = document.getElementById('btn-demo-light');
   const btnDemoDark = document.getElementById('btn-demo-dark');
   const THEME_KEY = 'carepoint_portal_theme';
@@ -612,8 +624,10 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       localStorage.setItem(THEME_KEY, theme);
     } catch (e) {}
-    if (themeModeLabel) {
-      themeModeLabel.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+    if (themeToggleBtn) {
+      const nextTheme = theme === 'dark' ? 'light' : 'dark';
+      themeToggleBtn.setAttribute('aria-label', `Switch to ${nextTheme} mode`);
+      themeToggleBtn.setAttribute('title', `Switch to ${nextTheme} mode`);
     }
   }
 
