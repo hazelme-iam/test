@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connected HCI Flow: Auth ➔ Stepper ➔ Confirmation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header with Flow Status -->
+  <header class="flow-header">
+    <h1>Onboarding & Workspace Setup</h1>
+    <p>Connected 3-Phase Flow: Auth Form ➔ Multi-Step Stepper ➔ Action Confirmation</p>
+
+    <!-- Visual Breadcrumb / Flow Tracker -->
+    <nav class="flow-tracker" aria-label="Onboarding Progress">
+      <div class="tracker-node active" id="node-1">
+        <span>1</span> Auth Form
+      </div>
+      <span class="tracker-arrow">→</span>
+      <div class="tracker-node" id="node-2">
+        <span>2</span> Workspace Stepper
+      </div>
+      <span class="tracker-arrow">→</span>
+      <div class="tracker-node" id="node-3">
+        <span>3</span> Confirmation
+      </div>
+    </nav>
+  </header>
+
+  <!-- Interactive Testing & Error Simulation Toolbar -->
+  <aside class="test-toolbar" aria-label="Testing Controls">
+    <div class="test-toolbar-group">
+      <span style="font-weight: 700; color: #10141A;">Test Controls:</span>
+      <button type="button" class="test-btn" id="btn-fill-valid">Fill Valid Data</button>
+      <button type="button" class="test-btn" id="btn-fill-invalid">Trigger Errors</button>
+      <button type="button" class="test-btn" id="btn-reset-flow">Reset Flow</button>
+    </div>
+    <div class="test-toolbar-group">
+      <label class="sim-error-label" title="Simulate an API failure on submission">
+        <input type="checkbox" id="sim-server-error">
+        <span>Simulate Server-Side Error</span>
+      </label>
+    </div>
+  </aside>
+
+  <!-- Connected Stages Container -->
+  <main class="flow-stage-container">
+
+    <!-- ====================================================================
+         PHASE 1: AUTH FORM
+         ==================================================================== -->
+    <section class="flow-stage active" id="stage-auth" aria-labelledby="auth-title">
+      <form class="auth-form" id="auth-form" novalidate>
+        <header>
+          <h1 id="auth-title">Create account</h1>
+          <p class="lede">Single-column layout — one path from top to submit.</p>
+        </header>
+
+        <!-- Simulated Server Error Alert -->
+        <div class="form-alert-error" id="auth-server-error" role="alert" aria-live="polite">
+          Server Error: This email address is already registered. Please use another or sign in.
+        </div>
+
+        <!-- Full Name -->
+        <div class="field" id="field-auth-fullname">
+          <label for="auth-fullname">Full name</label>
+          <input 
+            type="text" 
+            id="auth-fullname" 
+            name="fullname" 
+            placeholder="e.g. Jane Doe"
+            autocomplete="name"
+            aria-describedby="auth-fullname-error"
+          >
+          <span class="error" id="auth-fullname-error">Enter your full name.</span>
+        </div>
+
+        <!-- Work Email -->
+        <div class="field" id="field-auth-email">
+          <label for="auth-email">Work email</label>
+          <input 
+            type="email" 
+            id="auth-email" 
+            name="email" 
+            placeholder="name@company.com"
+            autocomplete="email"
+            aria-describedby="auth-email-error"
+          >
+          <span class="error" id="auth-email-error">Enter a valid email address.</span>
+        </div>
+
+        <!-- Company (Optional) -->
+        <div class="field" id="field-auth-company">
+          <label for="auth-company">Company</label>
+          <input 
+            type="text" 
+            id="auth-company" 
+            name="company" 
+            placeholder="Acme Studio (optional)"
+            autocomplete="organization"
+            aria-describedby="auth-company-helper"
+          >
+          <span class="field-helper" id="auth-company-helper">Company is optional — leave blank or type a name.</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="btn-create-account">Create account</button>
+
+        <!-- Success Notification -->
+        <div class="ok" id="auth-ok" role="status" aria-live="polite">
+          Account details look good — ready to continue.
+        </div>
+
+        <!-- Next Phase Advance Button -->
+        <button type="button" class="proceed-btn" id="btn-proceed-stepper">
+          Continue to Join Workspace →
+        </button>
+      </form>
+    </section>
+
+
+    <!-- ====================================================================
+         PHASE 2: STEPPER (MULTI-FORM)
+         ==================================================================== -->
+    <section class="flow-stage" id="stage-stepper" aria-labelledby="stepper-title">
+      <div class="card stepper-card" id="stepper-card">
+        <header>
+          <h1 id="stepper-title">Join workspace</h1>
+          
+          <!-- Progress Bar with 3 segments -->
+          <div class="progress" aria-hidden="true">
+            <span class="on" id="bar-1"></span>
+            <span id="bar-2"></span>
+            <span id="bar-3"></span>
+          </div>
+
+          <!-- Step Label -->
+          <div class="step-label" id="stepper-step-label" aria-live="polite">Step 1 of 3 · Account</div>
+        </header>
+
+        <!-- Server error banner in stepper -->
+        <div class="form-alert-error" id="stepper-server-error" role="alert" aria-live="polite" style="margin-bottom: 12px;">
+          Error: Unable to connect to server. Please try again.
+        </div>
+
+        <!-- Step 1: Account (Pre-filled from Auth Form) -->
+        <div class="panel active" id="stepper-panel-1">
+          <div class="stepper-fields">
+            <div class="field" id="field-step-name">
+              <label for="step-name">Full name</label>
+              <input 
+                type="text" 
+                id="step-name" 
+                placeholder="Jane Doe"
+                aria-describedby="step-name-error"
+              >
+              <span class="error" id="step-name-error">Enter your full name.</span>
+            </div>
+
+            <div class="field" id="field-step-email">
+              <label for="step-email">Email</label>
+              <input 
+                type="email" 
+                id="step-email" 
+                placeholder="jane@example.com"
+                aria-describedby="step-email-error"
+              >
+              <span class="error" id="step-email-error">Enter a valid email address.</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="back" id="btn-stepper-back-to-auth">Back to Auth</button>
+            <button type="button" class="next" id="btn-step-1-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Team details -->
+        <div class="panel" id="stepper-panel-2">
+          <div class="stepper-fields">
+            <div class="field" id="field-step-team">
+              <label for="step-team">Team name</label>
+              <input 
+                type="text" 
+                id="step-team" 
+                placeholder="Acme Studio"
+                aria-describedby="step-team-error"
+              >
+              <span class="error" id="step-team-error">Enter a team name (2+ characters).</span>
+            </div>
+
+            <div class="field" id="field-step-role">
+              <label for="step-role">Your role</label>
+              <input 
+                type="text" 
+                id="step-role" 
+                placeholder="e.g. Designer"
+                aria-describedby="step-role-error"
+              >
+              <span class="error" id="step-role-error">Add a short role title.</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="back" id="btn-step-2-back">Back</button>
+            <button type="button" class="next" id="btn-step-2-next">Next</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Review & Submit -->
+        <div class="panel" id="stepper-panel-3">
+          <p class="lede" style="margin-bottom: 8px;">Review your answers, then submit.</p>
+          
+          <div class="review-summary">
+            <div class="review-row">
+              <span class="k">Full name:</span>
+              <span class="v" id="rev-name">—</span>
+            </div>
+            <div class="review-row">
+              <span class="k">Work email:</span>
+              <span class="v" id="rev-email">—</span>
+            </div>
+            <div class="review-row">
+              <span class="k">Company:</span>
+              <span class="v" id="rev-company">—</span>
+            </div>
+            <div class="review-row">
+              <span class="k">Team:</span>
+              <span class="v" id="rev-team">—</span>
+            </div>
+            <div class="review-row">
+              <span class="k">Role:</span>
+              <span class="v" id="rev-role">—</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="back" id="btn-step-3-back">Back</button>
+            <button type="button" class="submit" id="btn-step-3-submit">Submit</button>
+          </div>
+        </div>
+
+        <!-- Final Feedback inside Stepper -->
+        <div class="ok" id="stepper-ok" role="status" aria-live="polite">
+          Workspace created — you could always go back before submit.
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         PHASE 3: CONFIRMATION DIALOG (MODAL)
+         ==================================================================== -->
+    <div class="backdrop" id="confirm-backdrop" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-desc">
+      <div class="dialog">
+        <h2 id="dialog-title">Confirm “Q3 roadmap”?</h2>
+        <p id="dialog-desc">
+          Selected: Q3 roadmap<br>
+          This permanently confirms and activates the workspace file. This action cannot be undone.
+        </p>
+
+        <!-- Error feedback within dialog if simulated failure occurs -->
+        <div class="error" id="dialog-error-msg" style="margin-bottom: 12px; display: none;">
+          Action failed: Simulated server conflict. Please try again.
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-cancel" id="dialog-cancel">Cancel</button>
+          <button type="button" class="btn btn-confirm" id="dialog-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Completion Card (After Confirmation) -->
+    <section class="final-success-card" id="final-card" aria-live="polite">
+      <div class="final-icon">✓</div>
+      <h2>Setup Complete!</h2>
+      <p>Workspace created — you could always go back before submit.</p>
+      <div class="review-summary" style="text-align: left; margin: 4px 0 10px 0;">
+        <div class="review-row"><span class="k">Account:</span> <span class="v" id="final-account">—</span></div>
+        <div class="review-row"><span class="k">Team:</span> <span class="v" id="final-team">—</span></div>
+        <div class="review-row"><span class="k">Confirmed File:</span> <span class="v">Q3 roadmap</span></div>
+      </div>
+      <button type="button" class="btn btn-primary" id="btn-restart-flow">Start Over</button>
+    </section>
+
+  </main>
+
+  <!-- HCI Guidelines & Best Practices Reference -->
+  <aside class="hci-notes">
+    <h3>HCI Design & Error Handling Architecture</h3>
+    <div class="hci-grid">
+      <div class="hci-item">
+        <strong>1. Sequential Single-Column Pathway</strong>
+        The user starts at the Auth Form, advances seamlessly to the Stepper with their account data carried forward, and finishes at the Confirmation modal. The path to completion is linear and focused.
+      </div>
+      <div class="hci-item">
+        <strong>2. Multi-Layered Error Handling</strong>
+        • <em>Client-side:</em> Immediate inline error markers (`.field.invalid .error`) with red borders and helper explanations.<br>
+        • <em>Self-Healing:</em> Errors clear automatically as the user types.<br>
+        • <em>Simulated Server Error:</em> Toggle checkbox above lets you test realistic server rejection handling and recovery without breaking user flow.
+      </div>
+      <div class="hci-item">
+        <strong>3. Non-Destructive Backward Navigation</strong>
+        Users can always click "Back" at any step (even back from the Stepper to Auth Form) without losing their entered data.
+      </div>
+      <div class="hci-item">
+        <strong>4. Explicit Verb Confirmation</strong>
+        The confirmation dialog names the exact item ("Q3 roadmap") and action ("Confirm", "Cancel"), adhering to the HCI rule of eliminating ambiguous "OK" buttons.
+      </div>
+    </div>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>

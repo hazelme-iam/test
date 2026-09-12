@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project files — Confirmation Dialog</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      background: #F5F6F8;
+      color: #10141A;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+    }
+    .panel {
+      background: #fff;
+      border: 1px solid #DDE1E7;
+      border-radius: 8px;
+      padding: 18px;
+      width: min(340px, 100%);
+    }
+    h1 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 0 0 4px;
+    }
+    .item {
+      color: #5B616B;
+      font-size: 0.8rem;
+      margin: 0 0 14px;
+    }
+    .file-chip {
+      background: #F5F6F8;
+      border: 1px solid #DDE1E7;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.78rem;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #10141A;
+    }
+    .btn {
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-action {
+      background: #2F49E8;
+      color: #fff;
+      border: none;
+      width: 100%;
+    }
+    .btn-action:hover {
+      background: #243bbd;
+    }
+    .btn-danger {
+      background: #C62828;
+      color: #fff;
+      border: none;
+    }
+    .btn-danger:hover {
+      background: #A31F1F;
+    }
+    .status {
+      color: #8A8F98;
+      font-size: 0.72rem;
+      min-height: 1.2em;
+      margin-top: 10px;
+    }
+    .status.success {
+      color: #0E7C66;
+      font-weight: 600;
+    }
+
+    /* Backdrop & Dialog */
+    .backdrop {
+      background: rgba(16, 20, 26, 0.45);
+      padding: 16px;
+      display: none;
+      place-items: center;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+    }
+    .backdrop.open {
+      display: grid;
+    }
+    .dialog {
+      background: #fff;
+      border: 1px solid #DDE1E7;
+      border-radius: 8px;
+      padding: 18px;
+      width: min(300px, 100%);
+      box-shadow: 0 16px 40px rgba(16, 20, 26, 0.2);
+    }
+    .dialog h2 {
+      font-size: 0.95rem;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+    .dialog p {
+      color: #5B616B;
+      font-size: 0.8rem;
+      line-height: 1.45;
+      margin: 0 0 16px;
+    }
+    .dialog-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-cancel {
+      background: #fff;
+      color: #10141A;
+      border: 1px solid #DDE1E7;
+      flex: 1;
+    }
+    .btn-cancel:hover {
+      background: #F5F6F8;
+    }
+    .btn-confirm {
+      background: #2F49E8; /* Confirm action as requested */
+      color: #fff;
+      border: none;
+      flex: 1;
+    }
+    .btn-confirm:hover {
+      background: #243bbd;
+    }
+    .btn-confirm.danger-mode {
+      background: #C62828;
+    }
+    .btn-confirm.danger-mode:hover {
+      background: #A31F1F;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Trigger Panel -->
+  <div class="panel">
+    <h1>Project files</h1>
+    <p class="item">Selected: Q3 roadmap</p>
+
+    <div class="file-chip">
+      <span>📄</span>
+      <span>Q3 roadmap.pdf</span>
+    </div>
+
+    <!-- Specific action trigger button -->
+    <button type="button" class="btn btn-action" id="open-dialog-btn">
+      Confirm file
+    </button>
+
+    <div class="status" id="status-msg">
+      Click above to open confirmation dialog
+    </div>
+  </div>
+
+  <!-- Accessible Modal Backdrop -->
+  <div class="backdrop" id="dialog-backdrop" role="dialog" aria-modal="true" aria-labelledby="dialog-heading" aria-describedby="dialog-description">
+    <div class="dialog">
+      <!-- Named item in heading per HCI rules -->
+      <h2 id="dialog-heading">Confirm “Q3 roadmap”?</h2>
+      
+      <!-- Clear consequence statement -->
+      <p id="dialog-description">
+        Selected: Q3 roadmap<br>
+        This will confirm and apply all changes to the file. This action cannot be undone.
+      </p>
+
+      <!-- Action-specific buttons (No generic OK / Yes) -->
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-cancel" id="btn-cancel">Cancel</button>
+        <button type="button" class="btn btn-confirm" id="btn-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const openBtn = document.getElementById('open-dialog-btn');
+    const backdrop = document.getElementById('dialog-backdrop');
+    const cancelBtn = document.getElementById('btn-cancel');
+    const confirmBtn = document.getElementById('btn-confirm');
+    const statusMsg = document.getElementById('status-msg');
+    let triggerElement = null;
+
+    function openModal() {
+      triggerElement = document.activeElement;
+      backdrop.classList.add('open');
+      confirmBtn.focus();
+      document.addEventListener('keydown', onKeyDown);
+    }
+
+    function closeModal() {
+      backdrop.classList.remove('open');
+      document.removeEventListener('keydown', onKeyDown);
+      triggerElement?.focus();
+    }
+
+    function onKeyDown(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+        statusMsg.textContent = 'Confirmation dismissed via Escape';
+        statusMsg.classList.remove('success');
+      }
+      if (e.key === 'Tab') {
+        const focusable = backdrop.querySelectorAll('button');
+        if (e.shiftKey && document.activeElement === focusable[0]) {
+          focusable[1].focus();
+          e.preventDefault();
+        } else if (!e.shiftKey && document.activeElement === focusable[1]) {
+          focusable[0].focus();
+          e.preventDefault();
+        }
+      }
+    }
+
+    openBtn.addEventListener('click', openModal);
+
+    cancelBtn.addEventListener('click', () => {
+      closeModal();
+      statusMsg.textContent = 'Confirmation cancelled';
+      statusMsg.classList.remove('success');
+    });
+
+    confirmBtn.addEventListener('click', () => {
+      closeModal();
+      statusMsg.textContent = '✓ Successfully confirmed "Q3 roadmap"';
+      statusMsg.classList.add('success');
+    });
+
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) {
+        closeModal();
+        statusMsg.textContent = 'Confirmation dismissed by outside click';
+        statusMsg.classList.remove('success');
+      }
+    });
+  </script>
+</body>
+</html>

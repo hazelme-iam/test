@@ -1,0 +1,710 @@
+/* ==========================================================================
+   Design System & Shared Styles
+   Following HCI Guidelines: Single-column forms, explicit labels, clear feedback
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-page: #F5F6F8;
+  --text-primary: #10141A;
+  --text-muted: #5B616B;
+  --text-dim: #8A8F98;
+  --border-card: #DDE1E7;
+  --border-input: #C5CAD3;
+  --primary: #2F49E8;
+  --primary-hover: #243bbd;
+  --error: #B42318;
+  --error-bg: #FDF2F2;
+  --success-bg: #E7F5F1;
+  --success-text: #0E7C66;
+  --danger: #C62828;
+  --danger-hover: #A31F1F;
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  padding: 16px;
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 20px;
+}
+
+/* Header & Flow Tracker */
+.flow-header {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+
+.flow-header h1 {
+  font-size: 1.35rem;
+  margin: 0 0 6px 0;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.flow-header p {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0 0 16px 0;
+}
+
+/* Flow Stage Indicator (1 -> 2 -> 3) */
+.flow-tracker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tracker-node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: #fff;
+  border: 1px solid var(--border-card);
+  transition: all 0.2s ease;
+}
+
+.tracker-node.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.tracker-node.done {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-color: rgba(14, 124, 102, 0.3);
+}
+
+.tracker-arrow {
+  color: var(--border-input);
+  font-size: 12px;
+}
+
+/* Testing & HCI Utility Toolbar */
+.test-toolbar {
+  width: 100%;
+  max-width: 600px;
+  background: #fff;
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.test-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.test-btn {
+  background: #F5F6F8;
+  border: 1px solid var(--border-input);
+  color: var(--text-primary);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.test-btn:hover {
+  background: #E5E9F0;
+}
+
+.sim-error-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.sim-error-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Active Stage Display Container */
+.flow-stage-container {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flow-stage {
+  display: none;
+  width: 100%;
+  animation: fadeIn 0.2s ease;
+}
+
+.flow-stage.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   1. Auth Form Specification
+   Single-column: fields stack, button follows same edge
+   ========================================================================== */
+
+form.auth-form {
+  background: #fff;
+  border: 1px solid #DDE1E7;
+  border-radius: 10px;
+  padding: 20px;
+  width: min(340px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+form.auth-form h1 {
+  font-size: 1.05rem;
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+
+.lede {
+  color: #5B616B;
+  font-size: 12px;
+  margin: 0 0 16px;
+  line-height: 1.4;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.field-helper {
+  font-size: 11.5px;
+  color: #5B616B;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+input {
+  background: #F5F6F8;
+  font-size: 14px;
+  border: 1px solid #C5CAD3;
+  border-radius: 6px;
+  padding: 10px 12px;
+  width: 100%;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:focus {
+  background: #fff;
+  border-color: #2F49E8;
+  box-shadow: 0 0 0 2px rgba(47, 73, 232, 0.15);
+}
+
+input::placeholder {
+  color: #8A8F98;
+}
+
+.error {
+  color: #B42318;
+  font-size: 12px;
+  margin: 6px 0 0;
+  display: none;
+  font-weight: 500;
+}
+
+.field.invalid input {
+  border-color: #B42318;
+  background: #FDF2F2;
+}
+
+.field.invalid .error {
+  display: block;
+}
+
+.field.invalid .field-helper {
+  display: none;
+}
+
+/* Global Server/Form Alert */
+.form-alert-error {
+  background: #FDF2F2;
+  border: 1px solid #F8B4B4;
+  color: #B42318;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12px;
+  display: none;
+  line-height: 1.4;
+}
+
+.form-alert-error.show {
+  display: block;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: filter 0.15s ease, background 0.15s ease;
+}
+
+button:focus-visible {
+  outline: 2px solid #2F49E8;
+  outline-offset: 2px;
+}
+
+form.auth-form button[type="submit"] {
+  background: #2F49E8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 11px 14px;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+form.auth-form button[type="submit"]:hover {
+  background: var(--primary-hover);
+}
+
+.ok {
+  background: #E7F5F1;
+  color: #0E7C66;
+  font-size: 13px;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: none;
+  line-height: 1.4;
+  margin-top: 10px;
+  border: 1px solid rgba(14, 124, 102, 0.2);
+}
+
+.ok.show {
+  display: block;
+}
+
+.proceed-btn {
+  background: #0E7C66;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 10px;
+  display: none;
+}
+
+.proceed-btn.show {
+  display: block;
+}
+
+.proceed-btn:hover {
+  background: #0b6352;
+}
+
+/* ==========================================================================
+   2. Stepper (Multi-Form) Specification
+   Progress + Back/Next on every intermediate step
+   ========================================================================== */
+
+.card.stepper-card {
+  background: #fff;
+  border: 1px solid #DDE1E7;
+  border-radius: 10px;
+  padding: 20px;
+  width: min(360px, 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.card.stepper-card h1 {
+  font-size: 1rem;
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+
+.progress {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.progress span {
+  background: #DDE1E7;
+  border-radius: 2px;
+  height: 4px;
+  flex: 1;
+  transition: background 0.25s ease;
+}
+
+.progress span.on {
+  background: #2F49E8;
+}
+
+.step-label {
+  color: #5B616B;
+  font-size: 12px;
+  margin: 0 0 14px;
+  font-weight: 500;
+}
+
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
+.stepper-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.actions button {
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+button.back {
+  background: #fff;
+  color: #10141A;
+  border: 1px solid #C5CAD3;
+  flex: 1;
+}
+
+button.back:hover {
+  background: #F5F6F8;
+}
+
+button.next,
+button.submit {
+  background: #2F49E8;
+  color: #fff;
+  border: none;
+  flex: 2;
+}
+
+button.next:hover,
+button.submit:hover {
+  background: var(--primary-hover);
+}
+
+.review-summary {
+  background: #F5F6F8;
+  border: 1px solid #DDE1E7;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.review-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.review-row span.k {
+  color: #5B616B;
+}
+
+.review-row span.v {
+  font-weight: 600;
+  color: #10141A;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* ==========================================================================
+   3. Confirmation Specification
+   Named item, clear consequence, Cancel and Action (Confirm)
+   ========================================================================== */
+
+.panel.confirmation-panel {
+  background: #fff;
+  border: 1px solid #DDE1E7;
+  border-radius: 8px;
+  padding: 18px;
+  width: min(340px, 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel.confirmation-panel h1 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.item {
+  color: #5B616B;
+  font-size: 0.8rem;
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+
+.item-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #F5F6F8;
+  border: 1px solid #DDE1E7;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #10141A;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.btn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 9px 14px;
+}
+
+.btn-primary {
+  background: #2F49E8;
+  color: #fff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-danger {
+  background: #C62828;
+  color: #fff;
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #A31F1F;
+}
+
+.status {
+  color: #8A8F98;
+  font-size: 0.72rem;
+  min-height: 1.2em;
+  margin-top: 10px;
+}
+
+.status.active {
+  color: #0E7C66;
+  font-weight: 600;
+}
+
+/* Modal Backdrop & Dialog */
+.backdrop {
+  background: rgba(16, 20, 26, 0.45);
+  padding: 16px;
+  display: none;
+  place-items: center;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+.backdrop.open {
+  display: grid;
+}
+
+.dialog {
+  background: #fff;
+  border: 1px solid #DDE1E7;
+  border-radius: 8px;
+  padding: 18px;
+  width: min(300px, 100%);
+  box-shadow: 0 16px 40px rgba(16, 20, 26, 0.2);
+  animation: dialog-appear 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dialog-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.dialog h2 {
+  font-size: 0.95rem;
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+
+.dialog p {
+  color: #5B616B;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin: 0 0 16px;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-cancel {
+  background: #fff;
+  color: #10141A;
+  border: 1px solid #DDE1E7;
+  flex: 1;
+}
+
+.btn-cancel:hover {
+  background: #F5F6F8;
+}
+
+.btn-confirm {
+  background: #2F49E8;
+  color: #fff;
+  border: none;
+  flex: 1;
+}
+
+.btn-confirm:hover {
+  background: var(--primary-hover);
+}
+
+/* Final Completion Card */
+.final-success-card {
+  background: #fff;
+  border: 1px solid #DDE1E7;
+  border-radius: 10px;
+  padding: 24px;
+  width: min(360px, 100%);
+  text-align: center;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.final-success-card.show {
+  display: flex;
+}
+
+.final-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #E7F5F1;
+  color: #0E7C66;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 4px auto;
+  font-size: 24px;
+}
+
+.final-success-card h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.final-success-card p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   HCI Annotations & Info Bar
+   ========================================================================== */
+.hci-notes {
+  max-width: 600px;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #DDE1E7;
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #5B616B;
+}
+
+.hci-notes h3 {
+  font-size: 14px;
+  margin: 0 0 8px 0;
+  color: #10141A;
+}
+
+.hci-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.hci-item strong {
+  color: #10141A;
+  display: block;
+  margin-bottom: 2px;
+}

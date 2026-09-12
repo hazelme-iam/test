@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join workspace — Multi-Step Stepper</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      background: #F5F6F8;
+      color: #10141A;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 16px;
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #DDE1E7;
+      border-radius: 10px;
+      padding: 20px;
+      width: min(360px, 100%);
+    }
+    h1 {
+      font-size: 1rem;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+    .progress {
+      display: flex;
+      gap: 6px;
+    }
+    .progress span {
+      background: #DDE1E7;
+      border-radius: 2px;
+      height: 4px;
+      flex: 1;
+      transition: background 0.2s ease;
+    }
+    .progress span.on {
+      background: #2F49E8;
+    }
+    .step-label {
+      color: #5B616B;
+      font-size: 12px;
+      margin: 0 0 14px;
+    }
+    .panel {
+      display: none;
+    }
+    .panel.active {
+      display: block;
+    }
+    .field {
+      margin-bottom: 12px;
+    }
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .field-helper {
+      font-size: 11.5px;
+      color: #5B616B;
+      margin-top: 4px;
+    }
+    input {
+      background: #F5F6F8;
+      font-size: 14px;
+      border: 1px solid #C5CAD3;
+      border-radius: 6px;
+      padding: 10px 12px;
+      width: 100%;
+      outline: none;
+      color: #10141A;
+    }
+    input:focus {
+      background: #fff;
+      border-color: #2F49E8;
+    }
+    .error {
+      color: #B42318;
+      font-size: 12px;
+      margin: 6px 0 0;
+      display: none;
+    }
+    .field.invalid input {
+      border-color: #B42318;
+      background: #FDF2F2;
+    }
+    .field.invalid .error {
+      display: block;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    button {
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .back {
+      background: #fff;
+      color: #10141A;
+      border: 1px solid #C5CAD3;
+      flex: 1;
+    }
+    .back:hover {
+      background: #F5F6F8;
+    }
+    .next, .submit {
+      background: #2F49E8;
+      color: #fff;
+      border: none;
+      flex: 2;
+    }
+    .next:hover, .submit:hover {
+      background: #243bbd;
+    }
+    .ok {
+      background: #E7F5F1;
+      color: #0E7C66;
+      font-size: 13px;
+      border-radius: 6px;
+      padding: 10px;
+      display: none;
+      margin-top: 14px;
+    }
+    .ok.show {
+      display: block;
+    }
+    .summary-box {
+      background: #F5F6F8;
+      border: 1px solid #DDE1E7;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #10141A;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="stepper-card">
+    <h1>Join workspace</h1>
+    
+    <div class="progress" aria-hidden="true">
+      <span class="on"></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="step-label" id="step-label">Step 1 of 3 · Account</div>
+
+    <!-- Step 1: Account -->
+    <div class="panel active" id="step-1">
+      <div class="field">
+        <label for="step-name">Full name</label>
+        <input type="text" id="step-name" placeholder="Jane Doe" autocomplete="name">
+        <span class="error">Enter your full name.</span>
+      </div>
+      <div class="field">
+        <label for="step-email">Email</label>
+        <input type="email" id="step-email" placeholder="jane@example.com" autocomplete="email">
+        <span class="error">Enter a valid email address.</span>
+      </div>
+      <div class="actions">
+        <button type="button" class="next" id="btn-next-1">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Team details -->
+    <div class="panel" id="step-2">
+      <div class="field">
+        <label for="step-team">Team name</label>
+        <input type="text" id="step-team" placeholder="Acme Studio">
+        <span class="error">Enter a team name (2+ characters).</span>
+      </div>
+      <div class="field">
+        <label for="step-role">Your role</label>
+        <input type="text" id="step-role" placeholder="e.g. Designer">
+        <span class="error">Add a short role title.</span>
+      </div>
+      <div class="actions">
+        <button type="button" class="back" id="btn-back-2">Back</button>
+        <button type="button" class="next" id="btn-next-2">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Review & Submit -->
+    <div class="panel" id="step-3">
+      <p style="font-size: 12px; color: #5B616B; margin: 0 0 10px 0;">Review your answers, then submit.</p>
+      
+      <div class="summary-box" id="summary-box">
+        <div><strong>Name:</strong> <span id="rev-name"></span></div>
+        <div><strong>Email:</strong> <span id="rev-email"></span></div>
+        <div><strong>Team:</strong> <span id="rev-team"></span></div>
+        <div><strong>Role:</strong> <span id="rev-role"></span></div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="back" id="btn-back-3">Back</button>
+        <button type="button" class="submit" id="btn-submit">Submit</button>
+      </div>
+    </div>
+
+    <!-- Feedback Message -->
+    <div class="ok" id="stepper-ok" role="status">
+      Workspace created — you could always go back before submit.
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    const panels = [
+      document.getElementById('step-1'),
+      document.getElementById('step-2'),
+      document.getElementById('step-3')
+    ];
+    const progressBars = document.querySelectorAll('.progress span');
+    const stepLabel = document.getElementById('step-label');
+    const okBanner = document.getElementById('stepper-ok');
+
+    const nameInput = document.getElementById('step-name');
+    const emailInput = document.getElementById('step-email');
+    const teamInput = document.getElementById('step-team');
+    const roleInput = document.getElementById('step-role');
+
+    const titles = [
+      "Step 1 of 3 · Account",
+      "Step 2 of 3 · Team details",
+      "Step 3 of 3 · Review & Submit"
+    ];
+
+    function setStep(s) {
+      currentStep = s;
+      panels.forEach((p, idx) => p.classList.toggle('active', idx + 1 === s));
+      progressBars.forEach((bar, idx) => bar.classList.toggle('on', idx + 1 <= s));
+      stepLabel.textContent = titles[s - 1];
+
+      if (s === 3) {
+        document.getElementById('rev-name').textContent = nameInput.value.trim();
+        document.getElementById('rev-email').textContent = emailInput.value.trim();
+        document.getElementById('rev-team').textContent = teamInput.value.trim();
+        document.getElementById('rev-role').textContent = roleInput.value.trim();
+      }
+    }
+
+    function validateStep1() {
+      let valid = true;
+      if (nameInput.value.trim().length < 2) {
+        nameInput.closest('.field').classList.add('invalid');
+        valid = false;
+      } else {
+        nameInput.closest('.field').classList.remove('invalid');
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim())) {
+        emailInput.closest('.field').classList.add('invalid');
+        valid = false;
+      } else {
+        emailInput.closest('.field').classList.remove('invalid');
+      }
+      return valid;
+    }
+
+    function validateStep2() {
+      let valid = true;
+      if (teamInput.value.trim().length < 2) {
+        teamInput.closest('.field').classList.add('invalid');
+        valid = false;
+      } else {
+        teamInput.closest('.field').classList.remove('invalid');
+      }
+
+      if (roleInput.value.trim().length < 1) {
+        roleInput.closest('.field').classList.add('invalid');
+        valid = false;
+      } else {
+        roleInput.closest('.field').classList.remove('invalid');
+      }
+      return valid;
+    }
+
+    [nameInput, emailInput, teamInput, roleInput].forEach(inp => {
+      inp.addEventListener('input', () => {
+        inp.closest('.field').classList.remove('invalid');
+        okBanner.classList.remove('show');
+      });
+    });
+
+    document.getElementById('btn-next-1').addEventListener('click', () => {
+      if (validateStep1()) setStep(2);
+    });
+
+    document.getElementById('btn-back-2').addEventListener('click', () => {
+      setStep(1);
+    });
+
+    document.getElementById('btn-next-2').addEventListener('click', () => {
+      if (validateStep2()) setStep(3);
+    });
+
+    document.getElementById('btn-back-3').addEventListener('click', () => {
+      setStep(2);
+      okBanner.classList.remove('show');
+    });
+
+    document.getElementById('btn-submit').addEventListener('click', () => {
+      okBanner.classList.add('show');
+    });
+  </script>
+</body>
+</html>
