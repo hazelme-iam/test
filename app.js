@@ -118,9 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
     bar3.classList.toggle('on', step >= 3);
 
     const stepTitles = [
-      "Step 1 of 3 · Account",
-      "Step 2 of 3 · Team details",
-      "Step 3 of 3 · Review & Submit"
+      "Step 1 of 3 · Patient Information",
+      "Step 2 of 3 · Clinic & Consultation",
+      "Step 3 of 3 · Review & Confirm"
     ];
     stepperStepLabel.textContent = stepTitles[step - 1];
 
@@ -267,6 +267,20 @@ document.addEventListener('DOMContentLoaded', () => {
   function openConfirmationDialog() {
     lastFocusedElement = document.activeElement;
     dialogErrorMsg.style.display = 'none';
+
+    // Populate patient info inside the modal
+    const patientName = state.data.fullname || stepName.value.trim() || 'Patient';
+    const dept = state.data.team || stepTeam.value.trim() || 'General Medicine Clinic';
+    const consultation = state.data.role || stepRole.value.trim() || 'General Consultation';
+
+    const dialogPatient = document.getElementById('dialog-patient');
+    const dialogDept = document.getElementById('dialog-dept');
+    const dialogReason = document.getElementById('dialog-reason');
+
+    if (dialogPatient) dialogPatient.textContent = patientName;
+    if (dialogDept) dialogDept.textContent = dept;
+    if (dialogReason) dialogReason.textContent = consultation;
+
     confirmBackdrop.classList.add('open');
     confirmBackdrop.setAttribute('aria-hidden', 'false');
     dialogConfirm.focus();
@@ -307,7 +321,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Populate final details
     finalAccount.textContent = `${state.data.fullname} (${state.data.email})`;
-    finalTeam.textContent = `${state.data.team} · ${state.data.role}`;
+    finalTeam.textContent = state.data.team || stepTeam.value.trim() || 'General Medicine Clinic';
+
+    const finalConsultation = document.getElementById('final-consultation');
+    if (finalConsultation) {
+      finalConsultation.textContent = state.data.role || stepRole.value.trim() || 'General Consultation';
+    }
 
     // Switch to Final Card & Done State
     setPhase(3);

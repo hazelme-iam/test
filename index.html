@@ -41,7 +41,7 @@
     <section class="flow-stage active" id="stage-auth" aria-labelledby="auth-title">
       <form class="auth-form" id="auth-form" novalidate>
         <header>
-          <h1 id="auth-title">Create account</h1>
+          <h1 id="auth-title">Patient Portal Registration</h1>
           <p class="lede">Single-column layout — one path from top to submit.</p>
         </header>
 
@@ -66,7 +66,7 @@
 
         <!-- Work Email / Patient Email -->
         <div class="field" id="field-auth-email">
-          <label for="auth-email">Work email</label>
+          <label for="auth-email">Email address</label>
           <input 
             type="email" 
             id="auth-email" 
@@ -80,12 +80,12 @@
 
         <!-- Company / Insurance HMO (Optional) -->
         <div class="field" id="field-auth-company">
-          <label for="auth-company">Company</label>
+          <label for="auth-company">HMO / Insurance Provider</label>
           <input 
             type="text" 
             id="auth-company" 
             name="company" 
-            placeholder="PhilHealth / Maxicare / HMO (optional)"
+            placeholder="PhilHealth / Maxicare / Intellicare (optional)"
             autocomplete="organization"
             aria-describedby="auth-company-helper"
           >
@@ -93,7 +93,7 @@
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" id="btn-create-account">Create account</button>
+        <button type="submit" id="btn-create-account">Create Patient Account</button>
 
         <!-- Success Notification -->
         <div class="ok" id="auth-ok" role="status" aria-live="polite">
@@ -102,19 +102,19 @@
 
         <!-- Next Phase Advance Button -->
         <button type="button" class="proceed-btn" id="btn-proceed-stepper">
-          Continue to Clinic Intake →
+          Proceed to Appointment Booking →
         </button>
       </form>
     </section>
 
 
     <!-- ====================================================================
-         PHASE 2: STEPPER (MULTI-FORM CLINIC INTAKE)
+         PHASE 2: STEPPER (CLINIC APPOINTMENT INTAKE)
          ==================================================================== -->
     <section class="flow-stage" id="stage-stepper" aria-labelledby="stepper-title">
       <div class="card stepper-card" id="stepper-card">
         <header>
-          <h1 id="stepper-title">Join workspace</h1>
+          <h1 id="stepper-title">Book Clinic Appointment</h1>
           
           <!-- Progress Bar with 3 segments -->
           <div class="progress" aria-hidden="true">
@@ -124,7 +124,7 @@
           </div>
 
           <!-- Step Label -->
-          <div class="step-label" id="stepper-step-label" aria-live="polite">Step 1 of 3 · Account</div>
+          <div class="step-label" id="stepper-step-label" aria-live="polite">Step 1 of 3 · Patient Information</div>
         </header>
 
         <!-- Server error banner in stepper -->
@@ -147,7 +147,7 @@
             </div>
 
             <div class="field" id="field-step-email">
-              <label for="step-email">Email</label>
+              <label for="step-email">Email address</label>
               <input 
                 type="email" 
                 id="step-email" 
@@ -159,31 +159,31 @@
           </div>
 
           <div class="actions">
-            <button type="button" class="back" id="btn-stepper-back-to-auth">Back to Auth</button>
+            <button type="button" class="back" id="btn-stepper-back-to-auth">Back to Account</button>
             <button type="button" class="next" id="btn-step-1-next">Next</button>
           </div>
         </div>
 
-        <!-- Step 2: Team details (Clinic Department & Consultation Reason) -->
+        <!-- Step 2: Clinic Department & Consultation Reason -->
         <div class="panel" id="stepper-panel-2">
           <div class="stepper-fields">
             <div class="field" id="field-step-team">
-              <label for="step-team">Team name</label>
+              <label for="step-team">Clinic department</label>
               <input 
                 type="text" 
                 id="step-team" 
-                placeholder="General Medicine Clinic"
+                placeholder="e.g. General Medicine / Pediatrics / Cardiology"
                 aria-describedby="step-team-error"
               >
               <span class="error" id="step-team-error">Enter a team name (2+ characters).</span>
             </div>
 
             <div class="field" id="field-step-role">
-              <label for="step-role">Your role</label>
+              <label for="step-role">Reason for consultation</label>
               <input 
                 type="text" 
                 id="step-role" 
-                placeholder="e.g. Designer"
+                placeholder="e.g. Routine Health Checkup / Consultation"
                 aria-describedby="step-role-error"
               >
               <span class="error" id="step-role-error">Add a short role title.</span>
@@ -210,22 +210,22 @@
               <span class="v" id="rev-email">—</span>
             </div>
             <div class="review-row">
-              <span class="k">Insurance/Company:</span>
+              <span class="k">HMO / Insurance:</span>
               <span class="v" id="rev-company">—</span>
             </div>
             <div class="review-row">
-              <span class="k">Clinic Team:</span>
+              <span class="k">Department:</span>
               <span class="v" id="rev-team">—</span>
             </div>
             <div class="review-row">
-              <span class="k">Consultation/Role:</span>
+              <span class="k">Consultation:</span>
               <span class="v" id="rev-role">—</span>
             </div>
           </div>
 
           <div class="actions">
             <button type="button" class="back" id="btn-step-3-back">Back</button>
-            <button type="button" class="submit" id="btn-step-3-submit">Submit</button>
+            <button type="button" class="submit" id="btn-step-3-submit">Confirm & Book</button>
           </div>
         </div>
 
@@ -240,12 +240,16 @@
          PHASE 3: CONFIRMATION DIALOG (MODAL)
          ==================================================================== -->
     <div class="backdrop" id="confirm-backdrop" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-desc">
-      <div class="dialog">
-        <h2 id="dialog-title">Confirm “Q3 roadmap”?</h2>
-        <p id="dialog-desc">
-          Selected: Q3 roadmap<br>
-          This permanently confirms your clinic appointment and intake record. This cannot be undone.
-        </p>
+      <div class="dialog" style="width: min(340px, 100%);">
+        <h2 id="dialog-title">Confirm Appointment Booking?</h2>
+        <div id="dialog-desc" style="color: #5B616B; font-size: 0.82rem; line-height: 1.5; margin: 0 0 16px;">
+          <div style="background: #F5F6F8; border: 1px solid #DDE1E7; border-radius: 6px; padding: 10px; margin-bottom: 12px; color: #10141A;">
+            <div><strong>Patient:</strong> <span id="dialog-patient">—</span></div>
+            <div><strong>Department:</strong> <span id="dialog-dept">—</span></div>
+            <div><strong>Consultation:</strong> <span id="dialog-reason">—</span></div>
+          </div>
+          This permanently confirms your clinic appointment slot and creates your intake file. This cannot be undone without contacting clinic reception.
+        </div>
 
         <!-- Error feedback within dialog if simulated failure occurs -->
         <div class="error" id="dialog-error-msg" style="margin-bottom: 12px; display: none;">
@@ -254,7 +258,7 @@
 
         <div class="dialog-actions">
           <button type="button" class="btn btn-cancel" id="dialog-cancel">Cancel</button>
-          <button type="button" class="btn btn-confirm" id="dialog-confirm">Confirm</button>
+          <button type="button" class="btn btn-confirm" id="dialog-confirm">Confirm Booking</button>
         </div>
       </div>
     </div>
@@ -263,20 +267,23 @@
     <section class="final-success-card" id="final-card" aria-live="polite">
       <div class="final-icon">✓</div>
       <h2>Appointment Confirmed!</h2>
-      <p>Workspace created — you could always go back before submit.</p>
+      <p style="color: #0E7C66; font-weight: 600; font-size: 13px;">Your clinic consultation slot is officially scheduled.</p>
       
       <div style="background: #F5F6F8; border: 1px dashed #C5CAD3; border-radius: 8px; padding: 14px; text-align: left; margin: 4px 0 10px 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #DDE1E7; padding-bottom: 8px; margin-bottom: 8px;">
-          <span style="font-size: 11px; font-weight: 700; color: #5B616B; text-transform: uppercase;">Intake Reference</span>
+          <span style="font-size: 11px; font-weight: 700; color: #5B616B; text-transform: uppercase;">Appointment Slip</span>
           <span style="font-size: 12px; font-weight: 700; color: #2F49E8;">#MED-2026-894</span>
         </div>
         <div class="review-row"><span class="k">Patient:</span> <span class="v" id="final-account">—</span></div>
-        <div class="review-row"><span class="k">Care Team:</span> <span class="v" id="final-team">—</span></div>
-        <div class="review-row"><span class="k">Intake File:</span> <span class="v">Q3 roadmap (Confirmed)</span></div>
-        <div class="review-row"><span class="k">Status:</span> <span class="v" style="color: #0E7C66;">Active / Confirmed</span></div>
+        <div class="review-row"><span class="k">Department:</span> <span class="v" id="final-team">—</span></div>
+        <div class="review-row"><span class="k">Consultation:</span> <span class="v" id="final-consultation">—</span></div>
+        <div class="review-row"><span class="k">Status:</span> <span class="v" style="color: #0E7C66;">Confirmed & Active</span></div>
+        <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #DDE1E7; font-size: 11px; color: #5B616B;">
+          📍 Please arrive 15 minutes before your schedule at 2nd Floor, CarePoint Health Center. Bring your valid ID and HMO card.
+        </div>
       </div>
 
-      <button type="button" class="btn btn-primary" id="btn-restart-flow">New Patient Intake</button>
+      <button type="button" class="btn btn-primary" id="btn-restart-flow">Book Another Appointment</button>
     </section>
 
   </main>
