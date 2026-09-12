@@ -28,7 +28,7 @@ body {
   background: var(--bg-page);
   color: var(--text-primary);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  padding: 16px;
+  padding: 20px 16px;
   margin: 0;
   min-height: 100vh;
   display: grid;
@@ -40,8 +40,24 @@ body {
 /* Header & Flow Tracker */
 .flow-header {
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;
   text-align: center;
+}
+
+.clinic-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #E7F5F1;
+  color: #0E7C66;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(14, 124, 102, 0.25);
 }
 
 .flow-header h1 {
@@ -55,6 +71,7 @@ body {
   color: var(--text-muted);
   font-size: 13px;
   margin: 0 0 16px 0;
+  line-height: 1.45;
 }
 
 /* Flow Stage Indicator (1 -> 2 -> 3) */
@@ -63,7 +80,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .tracker-node {
@@ -97,65 +114,10 @@ body {
   font-size: 12px;
 }
 
-/* Testing & HCI Utility Toolbar */
-.test-toolbar {
-  width: 100%;
-  max-width: 600px;
-  background: #fff;
-  border: 1px solid var(--border-card);
-  border-radius: 8px;
-  padding: 10px 14px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 12px;
-}
-
-.test-toolbar-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.test-btn {
-  background: #F5F6F8;
-  border: 1px solid var(--border-input);
-  color: var(--text-primary);
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 11.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.test-btn:hover {
-  background: #E5E9F0;
-}
-
-.sim-error-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  color: var(--text-muted);
-  cursor: pointer;
-  user-select: none;
-}
-
-.sim-error-label input[type="checkbox"] {
-  width: auto;
-  margin: 0;
-  cursor: pointer;
-}
-
 /* Active Stage Display Container */
 .flow-stage-container {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -179,23 +141,21 @@ body {
 }
 
 /* ==========================================================================
-   1. Auth Form Specification
-   Single-column: fields stack, button follows same edge
+   Card Container (Single-Column)
    ========================================================================== */
-
-form.auth-form {
+.card {
   background: #fff;
   border: 1px solid #DDE1E7;
   border-radius: 10px;
-  padding: 20px;
-  width: min(340px, 100%);
+  padding: 22px;
+  width: min(390px, 100%);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  box-shadow: 0 2px 6px rgba(16, 20, 26, 0.04);
 }
 
-form.auth-form h1 {
-  font-size: 1.05rem;
+.card h1 {
+  font-size: 1.1rem;
   margin: 0 0 4px;
   font-weight: 700;
 }
@@ -204,9 +164,52 @@ form.auth-form h1 {
   color: #5B616B;
   font-size: 12px;
   margin: 0 0 16px;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
+/* Auth Segmented Switch (Log In vs Register) */
+.auth-switch {
+  display: flex;
+  background: #F5F6F8;
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  padding: 3px;
+  margin-bottom: 18px;
+  gap: 4px;
+}
+
+.auth-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.auth-tab.active {
+  background: #fff;
+  color: var(--primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.auth-panel {
+  display: none;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-panel.active {
+  display: flex;
+}
+
+/* ==========================================================================
+   Form Fields & Single-Column Inputs
+   ========================================================================== */
 .field {
   display: flex;
   flex-direction: column;
@@ -228,7 +231,7 @@ label {
   line-height: 1.35;
 }
 
-input {
+input, select {
   background: #F5F6F8;
   font-size: 14px;
   border: 1px solid #C5CAD3;
@@ -237,10 +240,11 @@ input {
   width: 100%;
   color: var(--text-primary);
   outline: none;
+  font-family: inherit;
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 
-input:focus {
+input:focus, select:focus {
   background: #fff;
   border-color: #2F49E8;
   box-shadow: 0 0 0 2px rgba(47, 73, 232, 0.15);
@@ -258,7 +262,8 @@ input::placeholder {
   font-weight: 500;
 }
 
-.field.invalid input {
+.field.invalid input,
+.field.invalid select {
   border-color: #B42318;
   background: #FDF2F2;
 }
@@ -271,7 +276,7 @@ input::placeholder {
   display: none;
 }
 
-/* Global Server/Form Alert */
+/* Global Alert */
 .form-alert-error {
   background: #FDF2F2;
   border: 1px solid #F8B4B4;
@@ -281,12 +286,14 @@ input::placeholder {
   font-size: 12px;
   display: none;
   line-height: 1.4;
+  margin-bottom: 8px;
 }
 
 .form-alert-error.show {
   display: block;
 }
 
+/* Buttons */
 button {
   font-family: inherit;
   cursor: pointer;
@@ -298,7 +305,7 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-form.auth-form button[type="submit"] {
+.btn-submit {
   background: #2F49E8;
   color: #fff;
   border: none;
@@ -310,8 +317,26 @@ form.auth-form button[type="submit"] {
   margin-top: 4px;
 }
 
-form.auth-form button[type="submit"]:hover {
+.btn-submit:hover {
   background: var(--primary-hover);
+}
+
+.auth-subtext {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.auth-link {
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
 }
 
 .ok {
@@ -330,48 +355,9 @@ form.auth-form button[type="submit"]:hover {
   display: block;
 }
 
-.proceed-btn {
-  background: #0E7C66;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 14px;
-  width: 100%;
-  font-size: 13px;
-  font-weight: 600;
-  margin-top: 10px;
-  display: none;
-}
-
-.proceed-btn.show {
-  display: block;
-}
-
-.proceed-btn:hover {
-  background: #0b6352;
-}
-
 /* ==========================================================================
-   2. Stepper (Multi-Form) Specification
-   Progress + Back/Next on every intermediate step
+   2. Stepper Multi-Form (Information Form)
    ========================================================================== */
-
-.card.stepper-card {
-  background: #fff;
-  border: 1px solid #DDE1E7;
-  border-radius: 10px;
-  padding: 20px;
-  width: min(360px, 100%);
-  display: flex;
-  flex-direction: column;
-}
-
-.card.stepper-card h1 {
-  font-size: 1rem;
-  margin: 0 0 8px;
-  font-weight: 700;
-}
-
 .progress {
   display: flex;
   gap: 6px;
@@ -393,7 +379,7 @@ form.auth-form button[type="submit"]:hover {
 .step-label {
   color: #5B616B;
   font-size: 12px;
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   font-weight: 500;
 }
 
@@ -414,13 +400,13 @@ form.auth-form button[type="submit"]:hover {
 .actions {
   display: flex;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
 .actions button {
   border-radius: 6px;
-  padding: 10px 12px;
-  font-size: 14px;
+  padding: 10px 14px;
+  font-size: 13.5px;
   font-weight: 600;
 }
 
@@ -448,21 +434,37 @@ button.submit:hover {
   background: var(--primary-hover);
 }
 
+/* ==========================================================================
+   3. Confirmation & Review Section
+   ========================================================================== */
 .review-summary {
   background: #F5F6F8;
   border: 1px solid #DDE1E7;
-  border-radius: 6px;
-  padding: 12px;
+  border-radius: 8px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.review-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-card);
+  margin-top: 4px;
 }
 
 .review-row {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  gap: 8px;
 }
 
 .review-row span.k {
@@ -473,91 +475,10 @@ button.submit:hover {
   font-weight: 600;
   color: #10141A;
   text-align: right;
-  word-break: break-all;
+  word-break: break-word;
 }
 
-/* ==========================================================================
-   3. Confirmation Specification
-   Named item, clear consequence, Cancel and Action (Confirm)
-   ========================================================================== */
-
-.panel.confirmation-panel {
-  background: #fff;
-  border: 1px solid #DDE1E7;
-  border-radius: 8px;
-  padding: 18px;
-  width: min(340px, 100%);
-  display: flex;
-  flex-direction: column;
-}
-
-.panel.confirmation-panel h1 {
-  font-size: 0.95rem;
-  font-weight: 700;
-  margin: 0 0 4px;
-}
-
-.item {
-  color: #5B616B;
-  font-size: 0.8rem;
-  margin: 0 0 14px;
-  line-height: 1.4;
-}
-
-.item-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #F5F6F8;
-  border: 1px solid #DDE1E7;
-  padding: 8px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  color: #10141A;
-  font-weight: 500;
-  margin-bottom: 12px;
-}
-
-.btn {
-  font-size: 0.82rem;
-  font-weight: 600;
-  border-radius: 6px;
-  padding: 9px 14px;
-}
-
-.btn-primary {
-  background: #2F49E8;
-  color: #fff;
-  border: none;
-}
-
-.btn-primary:hover {
-  background: var(--primary-hover);
-}
-
-.btn-danger {
-  background: #C62828;
-  color: #fff;
-  border: none;
-}
-
-.btn-danger:hover {
-  background: #A31F1F;
-}
-
-.status {
-  color: #8A8F98;
-  font-size: 0.72rem;
-  min-height: 1.2em;
-  margin-top: 10px;
-}
-
-.status.active {
-  color: #0E7C66;
-  font-weight: 600;
-}
-
-/* Modal Backdrop & Dialog */
+/* Modal Backdrop & Confirmation Dialog */
 .backdrop {
   background: rgba(16, 20, 26, 0.45);
   padding: 16px;
@@ -576,33 +497,27 @@ button.submit:hover {
 .dialog {
   background: #fff;
   border: 1px solid #DDE1E7;
-  border-radius: 8px;
-  padding: 18px;
-  width: min(300px, 100%);
+  border-radius: 10px;
+  padding: 20px;
+  width: min(340px, 100%);
   box-shadow: 0 16px 40px rgba(16, 20, 26, 0.2);
   animation: dialog-appear 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes dialog-appear {
-  from {
-    opacity: 0;
-    transform: scale(0.96) translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+  from { opacity: 0; transform: scale(0.96) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .dialog h2 {
-  font-size: 0.95rem;
+  font-size: 1rem;
   margin: 0 0 8px;
   font-weight: 700;
 }
 
 .dialog p {
   color: #5B616B;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   line-height: 1.45;
   margin: 0 0 16px;
 }
@@ -616,6 +531,10 @@ button.submit:hover {
   background: #fff;
   color: #10141A;
   border: 1px solid #DDE1E7;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
   flex: 1;
 }
 
@@ -627,24 +546,31 @@ button.submit:hover {
   background: #2F49E8;
   color: #fff;
   border: none;
-  flex: 1;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  flex: 2;
 }
 
 .btn-confirm:hover {
   background: var(--primary-hover);
 }
 
-/* Final Completion Card */
+/* ==========================================================================
+   Final Success Screen / Appointment Slip
+   ========================================================================== */
 .final-success-card {
   background: #fff;
   border: 1px solid #DDE1E7;
   border-radius: 10px;
   padding: 24px;
-  width: min(360px, 100%);
+  width: min(390px, 100%);
   text-align: center;
   display: none;
   flex-direction: column;
   gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .final-success-card.show {
@@ -665,22 +591,50 @@ button.submit:hover {
 }
 
 .final-success-card h2 {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   margin: 0;
+  font-weight: 700;
 }
 
-.final-success-card p {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin: 0;
-  line-height: 1.45;
+.appointment-slip {
+  background: #F5F6F8;
+  border: 1px dashed #C5CAD3;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 6px 0;
 }
 
-/* ==========================================================================
-   HCI Annotations & Info Bar
-   ========================================================================== */
+.slip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-card);
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.btn-primary {
+  background: #2F49E8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+/* HCI Notes */
 .hci-notes {
-  max-width: 600px;
+  max-width: 500px;
   width: 100%;
   background: #fff;
   border: 1px solid #DDE1E7;
@@ -700,7 +654,7 @@ button.submit:hover {
 .hci-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 10px;
 }
 
 .hci-item strong {

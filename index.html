@@ -3,27 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CarePoint Clinic — Patient Portal & Consultation Booking</title>
+  <title>CarePoint Clinic — Patient Portal & Registration System</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- Clinic Header & Flow Tracker -->
+  <!-- Clinic Header & Progress Tracker -->
   <header class="flow-header">
-    <div style="display: inline-flex; align-items: center; gap: 8px; background: #E7F5F1; color: #0E7C66; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.04em;">
+    <div class="clinic-badge">
       <span>🏥 CarePoint Medical Clinic</span>
     </div>
-    <h1>Patient Portal & Intake System</h1>
-    <p>Sign in or register your patient account, select your department, and confirm your clinic booking.</p>
+    <h1>Patient Registration & Intake System</h1>
+    <p>Sign in or register your patient account, complete the guided information intake, and confirm your clinic booking.</p>
 
-    <!-- Visual Breadcrumb / Flow Tracker -->
-    <nav class="flow-tracker" aria-label="Patient Onboarding Progress">
+    <!-- Visual 3-Stage Progress Breadcrumb -->
+    <nav class="flow-tracker" aria-label="Registration Progress">
       <div class="tracker-node active" id="node-1">
-        <span>1</span> Patient Account
+        <span>1</span> Authentication
       </div>
       <span class="tracker-arrow">→</span>
       <div class="tracker-node" id="node-2">
-        <span>2</span> Clinic Intake
+        <span>2</span> Information Form
       </div>
       <span class="tracker-arrow">→</span>
       <div class="tracker-node" id="node-3">
@@ -32,107 +32,161 @@
     </nav>
   </header>
 
-  <!-- Connected Stages Container -->
+  <!-- Flow Stages Container -->
   <main class="flow-stage-container">
 
     <!-- ====================================================================
-         PHASE 1: AUTH FORM (PATIENT ACCOUNT)
+         PHASE 1: AUTHENTICATION (SIGN IN & REGISTRATION FORMS)
          ==================================================================== -->
-    <section class="flow-stage active" id="stage-auth" aria-labelledby="auth-title">
-      <form class="auth-form" id="auth-form" novalidate>
-        <header>
-          <h1 id="auth-title">Patient Portal Registration</h1>
-          <p class="lede">Single-column layout — one path from top to submit.</p>
-        </header>
-
-        <!-- Simulated Server Error Alert -->
-        <div class="form-alert-error" id="auth-server-error" role="alert" aria-live="polite">
-          Server Error: A patient record with this email already exists. Please use another email or sign in.
+    <section class="flow-stage active" id="stage-auth" aria-labelledby="auth-main-title">
+      <div class="card">
+        <!-- Segmented Tab Switcher between Sign In and Registration -->
+        <div class="auth-switch" role="tablist">
+          <button type="button" class="auth-tab active" id="tab-signin" role="tab" aria-selected="true">Sign In</button>
+          <button type="button" class="auth-tab" id="tab-register" role="tab" aria-selected="false">Create Account</button>
         </div>
 
-        <!-- Full Name -->
-        <div class="field" id="field-auth-fullname">
-          <label for="auth-fullname">Full name</label>
-          <input 
-            type="text" 
-            id="auth-fullname" 
-            name="fullname" 
-            placeholder="e.g. Hazel Nandong"
-            autocomplete="name"
-            aria-describedby="auth-fullname-error"
-          >
-          <span class="error" id="auth-fullname-error">Enter your full name.</span>
-        </div>
+        <!-- 1A: SIGN IN FORM -->
+        <form class="auth-panel active" id="form-signin" novalidate>
+          <header>
+            <h1 id="auth-main-title">Patient Portal Sign In</h1>
+            <p class="lede">Sign in with your registered patient email and password.</p>
+          </header>
 
-        <!-- Work Email / Patient Email -->
-        <div class="field" id="field-auth-email">
-          <label for="auth-email">Email address</label>
-          <input 
-            type="email" 
-            id="auth-email" 
-            name="email" 
-            placeholder="patient@example.com"
-            autocomplete="email"
-            aria-describedby="auth-email-error"
-          >
-          <span class="error" id="auth-email-error">Enter a valid email address.</span>
-        </div>
+          <div class="form-alert-error" id="signin-error" role="alert" aria-live="polite">
+            Invalid email or password. Please try again.
+          </div>
 
-        <!-- Company / Insurance HMO (Optional) -->
-        <div class="field" id="field-auth-company">
-          <label for="auth-company">HMO / Insurance Provider</label>
-          <input 
-            type="text" 
-            id="auth-company" 
-            name="company" 
-            placeholder="PhilHealth / Maxicare / Intellicare (optional)"
-            autocomplete="organization"
-            aria-describedby="auth-company-helper"
-          >
-          <span class="field-helper" id="auth-company-helper">Company is optional — leave blank or type a name.</span>
-        </div>
+          <div class="field" id="field-signin-email">
+            <label for="signin-email">Email address</label>
+            <input 
+              type="email" 
+              id="signin-email" 
+              placeholder="patient@example.com" 
+              autocomplete="email"
+              aria-describedby="signin-email-error"
+            >
+            <span class="error" id="signin-email-error">Enter a valid email address.</span>
+          </div>
 
-        <!-- Submit Button -->
-        <button type="submit" id="btn-create-account">Create Patient Account</button>
+          <div class="field" id="field-signin-password">
+            <label for="signin-password">Password</label>
+            <input 
+              type="password" 
+              id="signin-password" 
+              placeholder="••••••••" 
+              autocomplete="current-password"
+              aria-describedby="signin-password-error"
+            >
+            <span class="error" id="signin-password-error">Enter your password.</span>
+          </div>
 
-        <!-- Success Notification -->
-        <div class="ok" id="auth-ok" role="status" aria-live="polite">
-          Account details look good — ready to continue.
-        </div>
+          <button type="submit" class="btn-submit" id="btn-submit-signin">Sign In</button>
 
-        <!-- Next Phase Advance Button -->
-        <button type="button" class="proceed-btn" id="btn-proceed-stepper">
-          Proceed to Appointment Booking →
-        </button>
-      </form>
+          <div class="auth-subtext">
+            Don't have an account yet? 
+            <button type="button" class="auth-link" id="link-go-register">Create an account</button>
+          </div>
+
+          <div style="background: #F5F6F8; border: 1px solid #DDE1E7; border-radius: 6px; padding: 8px 10px; font-size: 11.5px; color: #5B616B; margin-top: 4px; text-align: center;">
+            Demo account: <strong>hazel@example.com</strong> / <strong>patient123</strong>
+          </div>
+        </form>
+
+        <!-- 1B: REGISTRATION FORM -->
+        <form class="auth-panel" id="form-register" novalidate>
+          <header>
+            <h1>Create Patient Account</h1>
+            <p class="lede">Single-column layout — one path from top to submit.</p>
+          </header>
+
+          <div class="form-alert-error" id="register-error" role="alert" aria-live="polite">
+            An account with this email already exists. Please sign in instead.
+          </div>
+
+          <div class="field" id="field-reg-fullname">
+            <label for="reg-fullname">Full name</label>
+            <input 
+              type="text" 
+              id="reg-fullname" 
+              placeholder="e.g. Hazel Nandong" 
+              autocomplete="name"
+              aria-describedby="reg-fullname-error"
+            >
+            <span class="error" id="reg-fullname-error">Enter your full name.</span>
+          </div>
+
+          <div class="field" id="field-reg-email">
+            <label for="reg-email">Email address</label>
+            <input 
+              type="email" 
+              id="reg-email" 
+              placeholder="patient@example.com" 
+              autocomplete="email"
+              aria-describedby="reg-email-error"
+            >
+            <span class="error" id="reg-email-error">Enter a valid email address.</span>
+          </div>
+
+          <div class="field" id="field-reg-password">
+            <label for="reg-password">Password</label>
+            <input 
+              type="password" 
+              id="reg-password" 
+              placeholder="At least 6 characters" 
+              autocomplete="new-password"
+              aria-describedby="reg-password-error"
+            >
+            <span class="error" id="reg-password-error">Password must be at least 6 characters.</span>
+          </div>
+
+          <div class="field" id="field-reg-company">
+            <label for="reg-company">HMO / Insurance Provider</label>
+            <input 
+              type="text" 
+              id="reg-company" 
+              placeholder="PhilHealth / Maxicare / Intellicare (optional)" 
+              autocomplete="organization"
+              aria-describedby="reg-company-helper"
+            >
+            <span class="field-helper" id="reg-company-helper">Company is optional — leave blank or type a name.</span>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-submit-register">Create Account</button>
+
+          <div class="ok" id="reg-ok" role="status" aria-live="polite">
+            Account details look good — ready to continue.
+          </div>
+
+          <div class="auth-subtext">
+            Already have an account? 
+            <button type="button" class="auth-link" id="link-go-signin">Sign in</button>
+          </div>
+        </form>
+      </div>
     </section>
 
 
     <!-- ====================================================================
-         PHASE 2: STEPPER (CLINIC APPOINTMENT INTAKE)
+         PHASE 2: INFORMATION FORM (STEPPER)
          ==================================================================== -->
     <section class="flow-stage" id="stage-stepper" aria-labelledby="stepper-title">
-      <div class="card stepper-card" id="stepper-card">
+      <div class="card" id="stepper-card">
         <header>
-          <h1 id="stepper-title">Book Clinic Appointment</h1>
+          <h1 id="stepper-title">Patient Information Form</h1>
           
-          <!-- Progress Bar with 3 segments -->
+          <!-- Stepper Progress Bar -->
           <div class="progress" aria-hidden="true">
             <span class="on" id="bar-1"></span>
             <span id="bar-2"></span>
             <span id="bar-3"></span>
           </div>
 
-          <!-- Step Label -->
-          <div class="step-label" id="stepper-step-label" aria-live="polite">Step 1 of 3 · Patient Information</div>
+          <!-- Step Indicator Label -->
+          <div class="step-label" id="stepper-step-label" aria-live="polite">Step 1 of 3 · Personal & Contact</div>
         </header>
 
-        <!-- Server error banner in stepper -->
-        <div class="form-alert-error" id="stepper-server-error" role="alert" aria-live="polite" style="margin-bottom: 12px;">
-          Error: Unable to verify clinic schedule. Please try again.
-        </div>
-
-        <!-- Step 1: Account (Pre-filled from Auth Form) -->
+        <!-- STEP 1: Personal & Contact Information -->
         <div class="panel active" id="stepper-panel-1">
           <div class="stepper-fields">
             <div class="field" id="field-step-name">
@@ -156,157 +210,243 @@
               >
               <span class="error" id="step-email-error">Enter a valid email address.</span>
             </div>
+
+            <div class="field" id="field-step-phone">
+              <label for="step-phone">Contact phone number</label>
+              <input 
+                type="tel" 
+                id="step-phone" 
+                placeholder="e.g. 0917 123 4567"
+                aria-describedby="step-phone-error"
+              >
+              <span class="error" id="step-phone-error">Enter a valid phone number (10+ digits).</span>
+            </div>
+
+            <div class="field" id="field-step-dob">
+              <label for="step-dob">Date of birth</label>
+              <input 
+                type="date" 
+                id="step-dob" 
+                aria-describedby="step-dob-error"
+              >
+              <span class="error" id="step-dob-error">Please select your date of birth.</span>
+            </div>
           </div>
 
           <div class="actions">
-            <button type="button" class="back" id="btn-stepper-back-to-auth">Back to Account</button>
-            <button type="button" class="next" id="btn-step-1-next">Next</button>
+            <button type="button" class="back" id="btn-stepper-back-to-auth">Sign Out</button>
+            <button type="button" class="next" id="btn-step-1-next">Next Step</button>
           </div>
         </div>
 
-        <!-- Step 2: Clinic Department & Consultation Reason -->
+        <!-- STEP 2: Clinic & Consultation Information -->
         <div class="panel" id="stepper-panel-2">
           <div class="stepper-fields">
-            <div class="field" id="field-step-team">
-              <label for="step-team">Clinic department</label>
-              <input 
-                type="text" 
-                id="step-team" 
-                placeholder="e.g. General Medicine / Pediatrics / Cardiology"
-                aria-describedby="step-team-error"
-              >
-              <span class="error" id="step-team-error">Enter a team name (2+ characters).</span>
+            <div class="field" id="field-step-dept">
+              <label for="step-dept">Clinic department</label>
+              <select id="step-dept" aria-describedby="step-dept-error">
+                <option value="">Select clinic department...</option>
+                <option value="General Medicine Clinic">General Medicine Clinic</option>
+                <option value="Pediatrics Department">Pediatrics Department</option>
+                <option value="Cardiology Specialist Clinic">Cardiology Specialist Clinic</option>
+                <option value="Dental Care Clinic">Dental Care Clinic</option>
+                <option value="Dermatology Department">Dermatology Department</option>
+              </select>
+              <span class="error" id="step-dept-error">Please select a clinic department.</span>
             </div>
 
-            <div class="field" id="field-step-role">
-              <label for="step-role">Reason for consultation</label>
+            <div class="field" id="field-step-reason">
+              <label for="step-reason">Reason for consultation</label>
               <input 
                 type="text" 
-                id="step-role" 
+                id="step-reason" 
                 placeholder="e.g. Routine Health Checkup / Consultation"
-                aria-describedby="step-role-error"
+                aria-describedby="step-reason-error"
               >
-              <span class="error" id="step-role-error">Add a short role title.</span>
+              <span class="error" id="step-reason-error">Enter reason for consultation.</span>
+            </div>
+
+            <div class="field" id="field-step-hmo">
+              <label for="step-hmo">HMO / Insurance Provider</label>
+              <input 
+                type="text" 
+                id="step-hmo" 
+                placeholder="PhilHealth / Maxicare (or leave blank if none)"
+              >
             </div>
           </div>
 
           <div class="actions">
             <button type="button" class="back" id="btn-step-2-back">Back</button>
-            <button type="button" class="next" id="btn-step-2-next">Next</button>
+            <button type="button" class="next" id="btn-step-2-next">Next Step</button>
           </div>
         </div>
 
-        <!-- Step 3: Review & Submit -->
+        <!-- STEP 3: Medical History & Emergency Contact -->
         <div class="panel" id="stepper-panel-3">
-          <p class="lede" style="margin-bottom: 8px;">Review your answers, then submit.</p>
-          
-          <div class="review-summary">
-            <div class="review-row">
-              <span class="k">Patient:</span>
-              <span class="v" id="rev-name">—</span>
+          <div class="stepper-fields">
+            <div class="field" id="field-step-emergency">
+              <label for="step-emergency">Emergency contact (Name & Phone)</label>
+              <input 
+                type="text" 
+                id="step-emergency" 
+                placeholder="e.g. Maria Nandong (0918 987 6543)"
+                aria-describedby="step-emergency-error"
+              >
+              <span class="error" id="step-emergency-error">Enter emergency contact name and phone number.</span>
             </div>
-            <div class="review-row">
-              <span class="k">Email:</span>
-              <span class="v" id="rev-email">—</span>
-            </div>
-            <div class="review-row">
-              <span class="k">HMO / Insurance:</span>
-              <span class="v" id="rev-company">—</span>
-            </div>
-            <div class="review-row">
-              <span class="k">Department:</span>
-              <span class="v" id="rev-team">—</span>
-            </div>
-            <div class="review-row">
-              <span class="k">Consultation:</span>
-              <span class="v" id="rev-role">—</span>
+
+            <div class="field" id="field-step-allergies">
+              <label for="step-allergies">Known drug allergies or conditions</label>
+              <input 
+                type="text" 
+                id="step-allergies" 
+                placeholder="e.g. Penicillin allergy / None"
+                aria-describedby="step-allergies-error"
+              >
+              <span class="error" id="step-allergies-error">Enter known allergies or type 'None'.</span>
             </div>
           </div>
 
           <div class="actions">
             <button type="button" class="back" id="btn-step-3-back">Back</button>
-            <button type="button" class="submit" id="btn-step-3-submit">Confirm & Book</button>
+            <button type="button" class="next" id="btn-step-3-next">Review Information →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ====================================================================
+         PHASE 3: CONFIRMATION SECTION (SUMMARY REVIEW & SUBMIT)
+         ==================================================================== -->
+    <section class="flow-stage" id="stage-confirmation" aria-labelledby="conf-title">
+      <div class="card">
+        <header>
+          <h1 id="conf-title">Review & Confirm Information</h1>
+          <p class="lede">Review your answers, then submit.</p>
+        </header>
+
+        <!-- Summary Card organized by sections -->
+        <div class="review-summary">
+          <div class="review-section-title">Personal & Contact Details</div>
+          <div class="review-row">
+            <span class="k">Patient Name:</span>
+            <span class="v" id="rev-name">—</span>
+          </div>
+          <div class="review-row">
+            <span class="k">Email Address:</span>
+            <span class="v" id="rev-email">—</span>
+          </div>
+          <div class="review-row">
+            <span class="k">Phone:</span>
+            <span class="v" id="rev-phone">—</span>
+          </div>
+          <div class="review-row">
+            <span class="k">Date of Birth:</span>
+            <span class="v" id="rev-dob">—</span>
+          </div>
+
+          <div class="review-section-title">Clinic & Consultation</div>
+          <div class="review-row">
+            <span class="k">Department:</span>
+            <span class="v" id="rev-dept">—</span>
+          </div>
+          <div class="review-row">
+            <span class="k">Reason:</span>
+            <span class="v" id="rev-reason">—</span>
+          </div>
+          <div class="review-row">
+            <span class="k">HMO / Insurance:</span>
+            <span class="v" id="rev-hmo">—</span>
+          </div>
+
+          <div class="review-section-title">Medical & Emergency</div>
+          <div class="review-row">
+            <span class="k">Emergency Contact:</span>
+            <span class="v" id="rev-emergency">—</span>
+          </div>
+          <div class="review-row">
+            <span class="k">Allergies / Notes:</span>
+            <span class="v" id="rev-allergies">—</span>
           </div>
         </div>
 
-        <!-- Final Feedback inside Stepper -->
-        <div class="ok" id="stepper-ok" role="status" aria-live="polite">
-          Workspace created — you could always go back before submit.
+        <div class="actions">
+          <button type="button" class="back" id="btn-conf-back">Back to Edit</button>
+          <button type="button" class="submit" id="btn-conf-open-modal">Confirm & Submit</button>
         </div>
       </div>
     </section>
 
     <!-- ====================================================================
-         PHASE 3: CONFIRMATION DIALOG (MODAL)
+         CONFIRMATION DIALOG (MODAL BACKDROP)
          ==================================================================== -->
     <div class="backdrop" id="confirm-backdrop" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-desc">
-      <div class="dialog" style="width: min(340px, 100%);">
-        <h2 id="dialog-title">Confirm Appointment Booking?</h2>
-        <div id="dialog-desc" style="color: #5B616B; font-size: 0.82rem; line-height: 1.5; margin: 0 0 16px;">
-          <div style="background: #F5F6F8; border: 1px solid #DDE1E7; border-radius: 6px; padding: 10px; margin-bottom: 12px; color: #10141A;">
-            <div><strong>Patient:</strong> <span id="dialog-patient">—</span></div>
-            <div><strong>Department:</strong> <span id="dialog-dept">—</span></div>
-            <div><strong>Consultation:</strong> <span id="dialog-reason">—</span></div>
+      <div class="dialog">
+        <h2 id="dialog-title">Confirm Patient Registration?</h2>
+        <div id="dialog-desc">
+          <div style="background: #F5F6F8; border: 1px solid #DDE1E7; border-radius: 6px; padding: 10px; margin-bottom: 12px; color: #10141A; font-size: 12px; line-height: 1.5;">
+            <div><strong>Patient:</strong> <span id="modal-patient-name">—</span></div>
+            <div><strong>Department:</strong> <span id="modal-dept-name">—</span></div>
+            <div><strong>Reason:</strong> <span id="modal-reason-name">—</span></div>
           </div>
-          This permanently confirms your clinic appointment slot and creates your intake file. This cannot be undone without contacting clinic reception.
-        </div>
-
-        <!-- Error feedback within dialog if simulated failure occurs -->
-        <div class="error" id="dialog-error-msg" style="margin-bottom: 12px; display: none;">
-          Action failed: Clinic schedule conflict detected. Please choose another slot.
+          Please confirm that all details are accurate. Once submitted, your registration and appointment slot will be confirmed in the clinic intake system.
         </div>
 
         <div class="dialog-actions">
-          <button type="button" class="btn btn-cancel" id="dialog-cancel">Cancel</button>
-          <button type="button" class="btn btn-confirm" id="dialog-confirm">Confirm Booking</button>
+          <button type="button" class="btn-cancel" id="dialog-cancel">Cancel</button>
+          <button type="button" class="btn-confirm" id="dialog-confirm">Confirm & Submit</button>
         </div>
       </div>
     </div>
 
-    <!-- Final Completion Card (After Confirmation) -->
+    <!-- ====================================================================
+         SUBMISSION SUCCESSFUL (APPOINTMENT SLIP)
+         ==================================================================== -->
     <section class="final-success-card" id="final-card" aria-live="polite">
       <div class="final-icon">✓</div>
-      <h2>Appointment Confirmed!</h2>
-      <p style="color: #0E7C66; font-weight: 600; font-size: 13px;">Your clinic consultation slot is officially scheduled.</p>
-      
-      <div style="background: #F5F6F8; border: 1px dashed #C5CAD3; border-radius: 8px; padding: 14px; text-align: left; margin: 4px 0 10px 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #DDE1E7; padding-bottom: 8px; margin-bottom: 8px;">
-          <span style="font-size: 11px; font-weight: 700; color: #5B616B; text-transform: uppercase;">Appointment Slip</span>
-          <span style="font-size: 12px; font-weight: 700; color: #2F49E8;">#MED-2026-894</span>
+      <h2>Registration & Booking Confirmed!</h2>
+      <p style="color: #0E7C66; font-weight: 600; font-size: 13px;">Workspace created — you could always go back before submit.</p>
+
+      <div class="appointment-slip">
+        <div class="slip-header">
+          <span style="font-size: 11px; font-weight: 700; color: #5B616B; text-transform: uppercase;">Official Intake Slip</span>
+          <span style="font-size: 12px; font-weight: 700; color: #2F49E8;" id="slip-ref-code">#MED-2026-8941</span>
         </div>
-        <div class="review-row"><span class="k">Patient:</span> <span class="v" id="final-account">—</span></div>
-        <div class="review-row"><span class="k">Department:</span> <span class="v" id="final-team">—</span></div>
-        <div class="review-row"><span class="k">Consultation:</span> <span class="v" id="final-consultation">—</span></div>
-        <div class="review-row"><span class="k">Status:</span> <span class="v" style="color: #0E7C66;">Confirmed & Active</span></div>
-        <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #DDE1E7; font-size: 11px; color: #5B616B;">
-          📍 Please arrive 15 minutes before your schedule at 2nd Floor, CarePoint Health Center. Bring your valid ID and HMO card.
+
+        <div class="review-row"><span class="k">Patient:</span> <span class="v" id="slip-patient">—</span></div>
+        <div class="review-row"><span class="k">Contact:</span> <span class="v" id="slip-contact">—</span></div>
+        <div class="review-row"><span class="k">Department:</span> <span class="v" id="slip-dept">—</span></div>
+        <div class="review-row"><span class="k">Consultation:</span> <span class="v" id="slip-reason">—</span></div>
+        <div class="review-row"><span class="k">Status:</span> <span class="v" style="color: #0E7C66;">Active & Scheduled</span></div>
+
+        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #DDE1E7; font-size: 11px; color: #5B616B; line-height: 1.4;">
+          📍 <strong>CarePoint Health Clinic</strong> — 2nd Floor, Main Building.<br>
+          Please present this reference slip and a valid ID at the reception desk.
         </div>
       </div>
 
-      <button type="button" class="btn btn-primary" id="btn-restart-flow">Book Another Appointment</button>
+      <button type="button" class="btn-primary" id="btn-new-patient">Register Another Patient</button>
     </section>
 
   </main>
 
   <!-- HCI Guidelines & Best Practices Reference -->
   <aside class="hci-notes">
-    <h3>HCI Design & Clinic System Architecture</h3>
+    <h3>HCI Design & Clinic Flow Architecture</h3>
     <div class="hci-grid">
       <div class="hci-item">
-        <strong>1. Single-Column Path for Stress-Free Patient Intake</strong>
-        Patients seeking healthcare need low-friction, distraction-free forms. The vertical single-column stacks inputs directly above the primary button, avoiding skipped fields.
+        <strong>1. Structured Single-Column Hierarchy</strong>
+        Users start with Authentication (Sign In or Register). After account verification, the single-column Stepper guides them linearly through personal, medical, and emergency sections without visual clutter.
       </div>
       <div class="hci-item">
-        <strong>2. Clean, Non-Repetitive Error Handling</strong>
-        Zero duplicate hints. Inputs show bold labels and subtle placeholder examples. If an error occurs, the single informative `.error` message appears in high-contrast `#B42318` red and immediately disappears upon typing.
+        <strong>2. Non-Destructive Stepper Navigation</strong>
+        Progress bars clearly indicate completion (`Step 1 of 3`, `Step 2 of 3`, `Step 3 of 3`). Every step offers a "Back" button, allowing users to safely verify or edit previous fields without erasing entered data.
       </div>
       <div class="hci-item">
-        <strong>3. Non-Destructive Backward Navigation</strong>
-        Patients can review their answers on Step 3 and safely navigate back to Step 1 or to the Account step without losing typed information.
-      </div>
-      <div class="hci-item">
-        <strong>4. Consequential Confirmation Verbs</strong>
-        The final modal specifies the exact intake record ("Q3 roadmap") and consequence, providing clear "Cancel" and "Confirm" buttons instead of ambiguous "OK" prompts.
+        <strong>3. Pre-Submission Review & Explicit Confirmation</strong>
+        Before final commitment, Phase 3 compiles an organized summary of all details. The confirmation dialog explicitly prompts "Confirm & Submit" or "Cancel", eliminating ambiguous generic "OK" prompts.
       </div>
     </div>
   </aside>

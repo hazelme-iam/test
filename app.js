@@ -1,96 +1,155 @@
 // ==========================================================================
-// Connected HCI Flow Controller: Auth ➔ Stepper ➔ Confirmation
-// Manages real-time error handling, data flow, navigation, and modal logic
+// CarePoint Clinic: Connected Patient Authentication, Stepper & Confirmation
+// Strictly adhering to HCI: Single-column forms, explicit labels, clear feedback
 // ==========================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Mock account database in localStorage
+  const ACCOUNTS_KEY = 'carepoint_registered_patients';
+  function getAccounts() {
+    try {
+      const stored = localStorage.getItem(ACCOUNTS_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch (e) {}
+    return [
+      {
+        fullname: 'Hazel Nandong',
+        email: 'hazel@example.com',
+        password: 'patient123',
+        company: 'Maxicare HMO'
+      }
+    ];
+  }
+
+  function saveAccount(acc) {
+    const list = getAccounts();
+    list.push(acc);
+    try {
+      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(list));
+    } catch (e) {}
+  }
+
+  // Application State
   const state = {
-    currentPhase: 1, // 1: Auth, 2: Stepper, 3: Completed
+    currentPhase: 1, // 1: Auth, 2: Stepper, 3: Review/Confirmation, 4: Done
     stepperStep: 1,   // 1, 2, 3
+    authMode: 'signin', // 'signin' or 'register'
     data: {
       fullname: '',
       email: '',
       company: '',
-      team: '',
-      role: ''
+      phone: '',
+      dob: '',
+      dept: '',
+      reason: '',
+      hmo: '',
+      emergency: '',
+      allergies: ''
     }
   };
 
-  // Cache DOM elements
-  // Phase 1 (Auth)
-  const stageAuth = document.getElementById('stage-auth');
-  const authForm = document.getElementById('auth-form');
-  const authFullname = document.getElementById('auth-fullname');
-  const authEmail = document.getElementById('auth-email');
-  const authCompany = document.getElementById('auth-company');
-  const authOk = document.getElementById('auth-ok');
-  const authServerError = document.getElementById('auth-server-error');
-  const btnProceedStepper = document.getElementById('btn-proceed-stepper');
+  // DOM Elements: Tracker & Stages
+  const node1 = document.getElementById('node-1');
+  const node2 = document.getElementById('node-2');
+  const node3 = document.getElementById('node-3');
 
-  // Phase 2 (Stepper)
+  const stageAuth = document.getElementById('stage-auth');
   const stageStepper = document.getElementById('stage-stepper');
+  const stageConfirmation = document.getElementById('stage-confirmation');
+  const finalCard = document.getElementById('final-card');
+
+  // DOM Elements: Phase 1 (Auth)
+  const tabSignin = document.getElementById('tab-signin');
+  const tabRegister = document.getElementById('tab-register');
+  const formSignin = document.getElementById('form-signin');
+  const formRegister = document.getElementById('form-register');
+  const linkGoRegister = document.getElementById('link-go-register');
+  const linkGoSignin = document.getElementById('link-go-signin');
+
+  const signinEmail = document.getElementById('signin-email');
+  const signinPassword = document.getElementById('signin-password');
+  const signinError = document.getElementById('signin-error');
+
+  const regFullname = document.getElementById('reg-fullname');
+  const regEmail = document.getElementById('reg-email');
+  const regPassword = document.getElementById('reg-password');
+  const regCompany = document.getElementById('reg-company');
+  const regError = document.getElementById('register-error');
+  const regOk = document.getElementById('reg-ok');
+
+  // DOM Elements: Phase 2 (Stepper)
   const stepperCard = document.getElementById('stepper-card');
   const stepperStepLabel = document.getElementById('stepper-step-label');
-  const stepperServerError = document.getElementById('stepper-server-error');
-  const stepperOk = document.getElementById('stepper-ok');
-
-  const stepName = document.getElementById('step-name');
-  const stepEmail = document.getElementById('step-email');
-  const stepTeam = document.getElementById('step-team');
-  const stepRole = document.getElementById('step-role');
+  const bar1 = document.getElementById('bar-1');
+  const bar2 = document.getElementById('bar-2');
+  const bar3 = document.getElementById('bar-3');
 
   const panel1 = document.getElementById('stepper-panel-1');
   const panel2 = document.getElementById('stepper-panel-2');
   const panel3 = document.getElementById('stepper-panel-3');
 
-  const bar1 = document.getElementById('bar-1');
-  const bar2 = document.getElementById('bar-2');
-  const bar3 = document.getElementById('bar-3');
+  const stepName = document.getElementById('step-name');
+  const stepEmail = document.getElementById('step-email');
+  const stepPhone = document.getElementById('step-phone');
+  const stepDob = document.getElementById('step-dob');
+
+  const stepDept = document.getElementById('step-dept');
+  const stepReason = document.getElementById('step-reason');
+  const stepHmo = document.getElementById('step-hmo');
+
+  const stepEmergency = document.getElementById('step-emergency');
+  const stepAllergies = document.getElementById('step-allergies');
 
   const btnStepperBackToAuth = document.getElementById('btn-stepper-back-to-auth');
   const btnStep1Next = document.getElementById('btn-step-1-next');
   const btnStep2Back = document.getElementById('btn-step-2-back');
   const btnStep2Next = document.getElementById('btn-step-2-next');
   const btnStep3Back = document.getElementById('btn-step-3-back');
-  const btnStep3Submit = document.getElementById('btn-step-3-submit');
+  const btnStep3Next = document.getElementById('btn-step-3-next');
 
-  // Review Elements
+  // DOM Elements: Phase 3 (Review & Modal)
   const revName = document.getElementById('rev-name');
   const revEmail = document.getElementById('rev-email');
-  const revCompany = document.getElementById('rev-company');
-  const revTeam = document.getElementById('rev-team');
-  const revRole = document.getElementById('rev-role');
+  const revPhone = document.getElementById('rev-phone');
+  const revDob = document.getElementById('rev-dob');
+  const revDept = document.getElementById('rev-dept');
+  const revReason = document.getElementById('rev-reason');
+  const revHmo = document.getElementById('rev-hmo');
+  const revEmergency = document.getElementById('rev-emergency');
+  const revAllergies = document.getElementById('rev-allergies');
 
-  // Phase 3 (Confirmation Modal)
+  const btnConfBack = document.getElementById('btn-conf-back');
+  const btnConfOpenModal = document.getElementById('btn-conf-open-modal');
+
   const confirmBackdrop = document.getElementById('confirm-backdrop');
   const dialogCancel = document.getElementById('dialog-cancel');
   const dialogConfirm = document.getElementById('dialog-confirm');
-  const dialogErrorMsg = document.getElementById('dialog-error-msg');
+  const modalPatientName = document.getElementById('modal-patient-name');
+  const modalDeptName = document.getElementById('modal-dept-name');
+  const modalReasonName = document.getElementById('modal-reason-name');
 
-  // Final Card
-  const finalCard = document.getElementById('final-card');
-  const finalAccount = document.getElementById('final-account');
-  const finalTeam = document.getElementById('final-team');
-  const btnRestartFlow = document.getElementById('btn-restart-flow');
-
-  // Tracker Nodes
-  const node1 = document.getElementById('node-1');
-  const node2 = document.getElementById('node-2');
-  const node3 = document.getElementById('node-3');
+  // DOM Elements: Final Card
+  const slipRefCode = document.getElementById('slip-ref-code');
+  const slipPatient = document.getElementById('slip-patient');
+  const slipContact = document.getElementById('slip-contact');
+  const slipDept = document.getElementById('slip-dept');
+  const slipReason = document.getElementById('slip-reason');
+  const btnNewPatient = document.getElementById('btn-new-patient');
 
   let lastFocusedElement = null;
 
   // ========================================================================
-  // Navigation & Tracker Helpers
+  // Navigation & Phase Transitions
   // ========================================================================
   function setPhase(phase) {
     state.currentPhase = phase;
 
     stageAuth.classList.toggle('active', phase === 1);
     stageStepper.classList.toggle('active', phase === 2);
-    finalCard.classList.toggle('show', phase === 3);
+    stageConfirmation.classList.toggle('active', phase === 3);
+    finalCard.classList.toggle('show', phase === 4);
 
-    // Update Tracker Nodes
+    // Update Progress Breadcrumb
     if (phase === 1) {
       node1.className = 'tracker-node active';
       node2.className = 'tracker-node';
@@ -102,8 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (phase === 3) {
       node1.className = 'tracker-node done';
       node2.className = 'tracker-node done';
+      node3.className = 'tracker-node active';
+    } else if (phase === 4) {
+      node1.className = 'tracker-node done';
+      node2.className = 'tracker-node done';
       node3.className = 'tracker-node done';
     }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function setStepperStep(step) {
@@ -118,30 +183,22 @@ document.addEventListener('DOMContentLoaded', () => {
     bar3.classList.toggle('on', step >= 3);
 
     const stepTitles = [
-      "Step 1 of 3 · Patient Information",
+      "Step 1 of 3 · Personal & Contact",
       "Step 2 of 3 · Clinic & Consultation",
-      "Step 3 of 3 · Review & Confirm"
+      "Step 3 of 3 · Medical History & Emergency"
     ];
     stepperStepLabel.textContent = stepTitles[step - 1];
 
-    if (step === 3) {
-      // Sync review data
-      revName.textContent = state.data.fullname || stepName.value.trim() || '—';
-      revEmail.textContent = state.data.email || stepEmail.value.trim() || '—';
-      revCompany.textContent = state.data.company || 'None specified';
-      revTeam.textContent = state.data.team || stepTeam.value.trim() || '—';
-      revRole.textContent = state.data.role || stepRole.value.trim() || '—';
-    }
-
-    // Auto-focus active input
-    const activeInput = stepperCard.querySelector('.panel.active input');
-    if (activeInput) {
-      setTimeout(() => activeInput.focus(), 50);
-    }
+    // Focus active step's first input
+    setTimeout(() => {
+      const activePanel = stepperCard.querySelector('.panel.active');
+      const firstInput = activePanel?.querySelector('input, select');
+      firstInput?.focus();
+    }, 50);
   }
 
   // ========================================================================
-  // Validation Utilities (HCI: Immediate, non-punitive feedback)
+  // Validation Utilities (HCI: Immediate, Non-Punitive, Self-Healing)
   // ========================================================================
   function validateField(inputEl, testFn) {
     const wrapper = inputEl.closest('.field');
@@ -160,126 +217,259 @@ document.addEventListener('DOMContentLoaded', () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  // Bind real-time input error clearing for all fields
-  const allInputs = [authFullname, authEmail, authCompany, stepName, stepEmail, stepTeam, stepRole];
-  allInputs.forEach(input => {
-    if (!input) return;
-    input.addEventListener('input', () => {
-      const wrapper = input.closest('.field');
+  function isPhoneValid(phone) {
+    const cleaned = phone.replace(/\D/g, '');
+    return cleaned.length >= 10;
+  }
+
+  // Bind real-time input error clearing to all inputs
+  const allInputs = [
+    signinEmail, signinPassword,
+    regFullname, regEmail, regPassword, regCompany,
+    stepName, stepEmail, stepPhone, stepDob,
+    stepDept, stepReason, stepHmo,
+    stepEmergency, stepAllergies
+  ];
+
+  allInputs.forEach(inp => {
+    if (!inp) return;
+    inp.addEventListener('input', () => {
+      const wrapper = inp.closest('.field');
       if (wrapper) wrapper.classList.remove('invalid');
-      authServerError.classList.remove('show');
-      stepperServerError.classList.remove('show');
-      dialogErrorMsg.style.display = 'none';
-      authOk.classList.remove('show');
-      btnProceedStepper.classList.remove('show');
+      signinError?.classList.remove('show');
+      regError?.classList.remove('show');
     });
   });
 
   // ========================================================================
-  // Phase 1: Auth Form Execution
+  // Phase 1: Authentication Logic (Sign In vs Register Toggle)
   // ========================================================================
-  authForm.addEventListener('submit', (e) => {
+  function setAuthMode(mode) {
+    state.authMode = mode;
+    const isSignin = mode === 'signin';
+
+    tabSignin.classList.toggle('active', isSignin);
+    tabRegister.classList.toggle('active', !isSignin);
+    tabSignin.setAttribute('aria-selected', isSignin ? 'true' : 'false');
+    tabRegister.setAttribute('aria-selected', !isSignin ? 'true' : 'false');
+
+    formSignin.classList.toggle('active', isSignin);
+    formRegister.classList.toggle('active', !isSignin);
+
+    // Reset error banners
+    signinError.classList.remove('show');
+    regError.classList.remove('show');
+    regOk.classList.remove('show');
+
+    // Focus appropriate email field
+    if (isSignin) {
+      signinEmail.focus();
+    } else {
+      regFullname.focus();
+    }
+  }
+
+  tabSignin.addEventListener('click', () => setAuthMode('signin'));
+  tabRegister.addEventListener('click', () => setAuthMode('register'));
+  linkGoRegister.addEventListener('click', () => setAuthMode('register'));
+  linkGoSignin.addEventListener('click', () => setAuthMode('signin'));
+
+  // 1A: Sign In Submission
+  formSignin.addEventListener('submit', (e) => {
     e.preventDefault();
-    authServerError.classList.remove('show');
+    signinError.classList.remove('show');
 
-    const validName = validateField(authFullname, val => val.length >= 2);
-    const validEmail = validateField(authEmail, val => isEmailValid(val));
+    const validEmail = validateField(signinEmail, val => isEmailValid(val));
+    const validPassword = validateField(signinPassword, val => val.length > 0);
 
-    if (!validName || !validEmail) {
-      authOk.classList.remove('show');
-      btnProceedStepper.classList.remove('show');
-      authForm.querySelector('.field.invalid input')?.focus();
+    if (!validEmail || !validPassword) {
+      formSignin.querySelector('.field.invalid input')?.focus();
       return;
     }
 
-    // Save state
-    state.data.fullname = authFullname.value.trim();
-    state.data.email = authEmail.value.trim();
-    state.data.company = authCompany.value.trim();
+    const emailVal = signinEmail.value.trim().toLowerCase();
+    const passVal = signinPassword.value;
 
-    // Show success feedback
-    authOk.textContent = "Account details look good — ready to continue.";
-    authOk.classList.add('show');
-    btnProceedStepper.classList.add('show');
+    const accounts = getAccounts();
+    const matched = accounts.find(a => a.email.toLowerCase() === emailVal && a.password === passVal);
 
-    // Prepopulate Phase 2 Stepper fields
+    if (!matched) {
+      signinError.textContent = "Invalid email or password. Please check your credentials or register.";
+      signinError.classList.add('show');
+      signinPassword.closest('.field').classList.add('invalid');
+      signinPassword.focus();
+      return;
+    }
+
+    // Success login! Load patient data
+    state.data.fullname = matched.fullname;
+    state.data.email = matched.email;
+    state.data.company = matched.company || '';
+
+    // Populate Stepper fields
     stepName.value = state.data.fullname;
     stepEmail.value = state.data.email;
-  });
+    if (state.data.company && !stepHmo.value) {
+      stepHmo.value = state.data.company;
+    }
 
-  btnProceedStepper.addEventListener('click', () => {
+    // Advance to Stepper
     setPhase(2);
     setStepperStep(1);
   });
 
-  // ========================================================================
-  // Phase 2: Stepper (Multi-Form) Execution
-  // ========================================================================
-  btnStepperBackToAuth.addEventListener('click', () => {
-    // Non-destructive backward step to Auth Form
-    setPhase(1);
-    authFullname.focus();
+  // 1B: Registration Submission
+  formRegister.addEventListener('submit', (e) => {
+    e.preventDefault();
+    regError.classList.remove('show');
+    regOk.classList.remove('show');
+
+    const validName = validateField(regFullname, val => val.length >= 2);
+    const validEmail = validateField(regEmail, val => isEmailValid(val));
+    const validPassword = validateField(regPassword, val => val.length >= 6);
+
+    if (!validName || !validEmail || !validPassword) {
+      formRegister.querySelector('.field.invalid input')?.focus();
+      return;
+    }
+
+    const emailVal = regEmail.value.trim().toLowerCase();
+    const accounts = getAccounts();
+    const existing = accounts.find(a => a.email.toLowerCase() === emailVal);
+
+    if (existing) {
+      regError.textContent = "A patient account with this email already exists. Please sign in.";
+      regError.classList.add('show');
+      regEmail.closest('.field').classList.add('invalid');
+      regEmail.focus();
+      return;
+    }
+
+    // Register account
+    const newAcc = {
+      fullname: regFullname.value.trim(),
+      email: regEmail.value.trim(),
+      password: regPassword.value,
+      company: regCompany.value.trim()
+    };
+    saveAccount(newAcc);
+
+    state.data.fullname = newAcc.fullname;
+    state.data.email = newAcc.email;
+    state.data.company = newAcc.company;
+
+    // Show success feedback
+    regOk.textContent = "Account details look good — ready to continue.";
+    regOk.classList.add('show');
+
+    // Prepopulate Phase 2 Stepper fields
+    stepName.value = state.data.fullname;
+    stepEmail.value = state.data.email;
+    stepHmo.value = state.data.company;
+
+    // Smooth transition to Stepper
+    setTimeout(() => {
+      setPhase(2);
+      setStepperStep(1);
+    }, 700);
   });
 
+  // ========================================================================
+  // Phase 2: Information Form (Stepper Multi-Form)
+  // ========================================================================
+  btnStepperBackToAuth.addEventListener('click', () => {
+    setPhase(1);
+    setAuthMode('signin');
+  });
+
+  // Step 1 -> Step 2
   btnStep1Next.addEventListener('click', () => {
     const validName = validateField(stepName, val => val.length >= 2);
     const validEmail = validateField(stepEmail, val => isEmailValid(val));
+    const validPhone = validateField(stepPhone, val => isPhoneValid(val));
+    const validDob = validateField(stepDob, val => val.length > 0);
 
-    if (validName && validEmail) {
+    if (validName && validEmail && validPhone && validDob) {
       state.data.fullname = stepName.value.trim();
       state.data.email = stepEmail.value.trim();
+      state.data.phone = stepPhone.value.trim();
+      state.data.dob = stepDob.value;
+
       setStepperStep(2);
     } else {
       stepperCard.querySelector('.panel.active .field.invalid input')?.focus();
     }
   });
 
+  // Step 2 -> Step 1
   btnStep2Back.addEventListener('click', () => {
     setStepperStep(1);
   });
 
+  // Step 2 -> Step 3
   btnStep2Next.addEventListener('click', () => {
-    const validTeam = validateField(stepTeam, val => val.length >= 2);
-    const validRole = validateField(stepRole, val => val.length >= 1);
+    const validDept = validateField(stepDept, val => val.length > 0);
+    const validReason = validateField(stepReason, val => val.length >= 2);
 
-    if (validTeam && validRole) {
-      state.data.team = stepTeam.value.trim();
-      state.data.role = stepRole.value.trim();
+    if (validDept && validReason) {
+      state.data.dept = stepDept.value;
+      state.data.reason = stepReason.value.trim();
+      state.data.hmo = stepHmo.value.trim() || 'None specified';
+
       setStepperStep(3);
+    } else {
+      stepperCard.querySelector('.panel.active .field.invalid select, .panel.active .field.invalid input')?.focus();
+    }
+  });
+
+  // Step 3 -> Step 2
+  btnStep3Back.addEventListener('click', () => {
+    setStepperStep(2);
+  });
+
+  // Step 3 -> Phase 3 (Review & Confirmation)
+  btnStep3Next.addEventListener('click', () => {
+    const validEmergency = validateField(stepEmergency, val => val.length >= 3);
+    const validAllergies = validateField(stepAllergies, val => val.length >= 2);
+
+    if (validEmergency && validAllergies) {
+      state.data.emergency = stepEmergency.value.trim();
+      state.data.allergies = stepAllergies.value.trim();
+
+      // Populate Summary Review in Phase 3
+      revName.textContent = state.data.fullname;
+      revEmail.textContent = state.data.email;
+      revPhone.textContent = state.data.phone;
+      revDob.textContent = state.data.dob;
+
+      revDept.textContent = state.data.dept;
+      revReason.textContent = state.data.reason;
+      revHmo.textContent = state.data.hmo;
+
+      revEmergency.textContent = state.data.emergency;
+      revAllergies.textContent = state.data.allergies;
+
+      setPhase(3);
     } else {
       stepperCard.querySelector('.panel.active .field.invalid input')?.focus();
     }
   });
 
-  btnStep3Back.addEventListener('click', () => {
-    setStepperStep(2);
-    stepperOk.classList.remove('show');
+  // ========================================================================
+  // Phase 3: Review, Confirmation & Modal
+  // ========================================================================
+  btnConfBack.addEventListener('click', () => {
+    // Non-destructive return to edit stepper
+    setPhase(2);
+    setStepperStep(3);
   });
 
-  // Submit on Step 3 triggers Phase 3 Confirmation Dialog
-  btnStep3Submit.addEventListener('click', () => {
-    openConfirmationDialog();
-  });
-
-  // ========================================================================
-  // Phase 3: Confirmation Dialog Execution
-  // ========================================================================
   function openConfirmationDialog() {
     lastFocusedElement = document.activeElement;
-    dialogErrorMsg.style.display = 'none';
 
-    // Populate patient info inside the modal
-    const patientName = state.data.fullname || stepName.value.trim() || 'Patient';
-    const dept = state.data.team || stepTeam.value.trim() || 'General Medicine Clinic';
-    const consultation = state.data.role || stepRole.value.trim() || 'General Consultation';
-
-    const dialogPatient = document.getElementById('dialog-patient');
-    const dialogDept = document.getElementById('dialog-dept');
-    const dialogReason = document.getElementById('dialog-reason');
-
-    if (dialogPatient) dialogPatient.textContent = patientName;
-    if (dialogDept) dialogDept.textContent = dept;
-    if (dialogReason) dialogReason.textContent = consultation;
+    modalPatientName.textContent = state.data.fullname;
+    modalDeptName.textContent = state.data.dept;
+    modalReasonName.textContent = state.data.reason;
 
     confirmBackdrop.classList.add('open');
     confirmBackdrop.setAttribute('aria-hidden', 'false');
@@ -298,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape') {
       closeConfirmationDialog();
     }
-    // Simple Tab Trap
+    // Keyboard Focus Trap
     if (e.key === 'Tab') {
       const focusable = [dialogCancel, dialogConfirm];
       if (e.shiftKey && document.activeElement === focusable[0]) {
@@ -311,55 +501,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  dialogCancel.addEventListener('click', () => {
-    closeConfirmationDialog();
-  });
+  btnConfOpenModal.addEventListener('click', openConfirmationDialog);
+  dialogCancel.addEventListener('click', closeConfirmationDialog);
 
-  dialogConfirm.addEventListener('click', () => {
-    // Success!
-    closeConfirmationDialog();
-
-    // Populate final details
-    finalAccount.textContent = `${state.data.fullname} (${state.data.email})`;
-    finalTeam.textContent = state.data.team || stepTeam.value.trim() || 'General Medicine Clinic';
-
-    const finalConsultation = document.getElementById('final-consultation');
-    if (finalConsultation) {
-      finalConsultation.textContent = state.data.role || stepRole.value.trim() || 'General Consultation';
-    }
-
-    // Switch to Final Card & Done State
-    setPhase(3);
-  });
-
-  // Close when clicking outside dialog box
+  // Close when clicking modal backdrop outside box
   confirmBackdrop.addEventListener('click', (e) => {
     if (e.target === confirmBackdrop) {
       closeConfirmationDialog();
     }
   });
 
-  function resetEntireFlow() {
-    authForm.reset();
-    stepName.value = '';
-    stepEmail.value = '';
-    stepTeam.value = '';
-    stepRole.value = '';
+  // Final Confirmation Submit
+  dialogConfirm.addEventListener('click', () => {
+    closeConfirmationDialog();
 
-    state.data = { fullname: '', email: '', company: '', team: '', role: '' };
+    // Generate unique reference code
+    const randomCode = Math.floor(1000 + Math.random() * 9000);
+    const refCode = `#MED-2026-${randomCode}`;
+
+    slipRefCode.textContent = refCode;
+    slipPatient.textContent = state.data.fullname;
+    slipContact.textContent = `${state.data.email} · ${state.data.phone}`;
+    slipDept.textContent = state.data.dept;
+    slipReason.textContent = state.data.reason;
+
+    // Advance to Final Completion State
+    setPhase(4);
+  });
+
+  // Reset / Register Another Patient
+  btnNewPatient.addEventListener('click', () => {
+    formRegister.reset();
+    formSignin.reset();
+    stepPhone.value = '';
+    stepDob.value = '';
+    stepDept.value = '';
+    stepReason.value = '';
+    stepHmo.value = '';
+    stepEmergency.value = '';
+    stepAllergies.value = '';
 
     document.querySelectorAll('.field.invalid').forEach(f => f.classList.remove('invalid'));
-    authOk.classList.remove('show');
-    btnProceedStepper.classList.remove('show');
-    authServerError.classList.remove('show');
-    stepperServerError.classList.remove('show');
-    stepperOk.classList.remove('show');
-    dialogErrorMsg.style.display = 'none';
 
     setPhase(1);
-    setStepperStep(1);
-    authFullname.focus();
-  }
-
-  btnRestartFlow.addEventListener('click', resetEntireFlow);
+    setAuthMode('signin');
+  });
 });
